@@ -299,7 +299,7 @@ private:
 				if (green > 0)//floor
 				{
 					int texno = 255 - green;
-					init_wall(XMFLOAT3(xx*FULLWALL - x_offset, 0, yy*FULLWALL), 4, texno);
+					init_wall(XMFLOAT3(xx*FULLWALL - x_offset, 0, yy*FULLWALL), 4, texno); //if this line is commented out then the map is ceilingless -ML
 				}
 			}
 	}
@@ -350,7 +350,7 @@ public:
 	}
 	void render_level(ID3D11DeviceContext* ImmediateContext, ID3D11Buffer *vertexbuffer_wall, XMMATRIX *view, XMMATRIX *projection, ID3D11Buffer* dx_cbuffer)
 	{
-		//set up everything for the waqlls/floors/ceilings:
+		//set up everything for the walls/floors/ceilings:
 		UINT stride = sizeof(SimpleVertex);
 		UINT offset = 0;
 		ImmediateContext->IASetVertexBuffers(0, 1, &vertexbuffer_wall, &stride, &offset);
@@ -380,23 +380,22 @@ public:
 		}
 	}
 
-	//wall detection
+	//=================================== wall detection -ML =============================//
 	bool isWalkable(XMFLOAT3 pos)
 	{
-		//do not ask for y, it doesnt move
-		float x, z;
-		x = pos.x;
-		z = pos.z;
-
-
-		//recalculate in pixel space
-		BYTE colorMatch = leveldata.get_pixel(-(x) / 2 + 50.5, -(z) / 2 + .5, 0);
-		if (colorMatch < 10)
-		{
+		BYTE red;
+		float x = pos.x;
+		float z = pos.z;
+		red = leveldata.get_pixel((32 - x) / FULLWALL + 0.5, -z / FULLWALL + .5, 2);
+		//32 is the width of the bitmap -ML
+		if (red > 10) {
 			return true;
 		}
-		return false;
+		else {
+			return false;
+		}
 	}
+	//====================================================================================//
 };
 
 
@@ -416,7 +415,7 @@ public:
 		shift = false;//-SH
 		position = rotation = XMFLOAT3(0, 0, 0);
 	}
-	void animation(bitmap *leveldata)//bitmap in the argument NOW YOU CAN USE IT HERE!!! *NEW*
+	void animation(level *leveldata)//using the level for the wall collision -ML
 	{
 
 		XMMATRIX R, T;
@@ -440,9 +439,9 @@ public:
 		if (w)
 		{
 			if (shift) {// -SH
-				newPos.x -= forward.x * 0.02;
-				newPos.y -= forward.y * 0.02;
-				newPos.z -= forward.z * 0.02;
+				newPos.x -= forward.x * 0.05;
+				newPos.y -= forward.y * 0.05;
+				newPos.z -= forward.z * 0.05;
 			}
 
 			else {
@@ -451,12 +450,14 @@ public:
 				newPos.z -= forward.z * 0.01;
 			}
 		}
+		//old speeds shift - 0.015 w/o shift - 0.001 -ML
+		//changed it to be a bit faster. it was way too painfully slow -ML
 		if (s)
 		{
 			if (shift) {// -SH
-				newPos.x += forward.x * 0.02;
-				newPos.y += forward.y * 0.02;
-				newPos.z += forward.z * 0.02;
+				newPos.x += forward.x * 0.05;
+				newPos.y += forward.y * 0.05;
+				newPos.z += forward.z * 0.05;
 			}
 			else {
 
@@ -468,9 +469,9 @@ public:
 		if (d)
 		{
 			if (shift) {// -SH
-				newPos.x -= side.x * 0.015;
-				newPos.y -= side.y * 0.015;
-				newPos.z -= side.z * 0.015;
+				newPos.x -= side.x * 0.05;
+				newPos.y -= side.y * 0.05;
+				newPos.z -= side.z * 0.05;
 
 			}
 			else {
@@ -482,9 +483,9 @@ public:
 		if (a)
 		{
 			if (shift) {// -SH
-				newPos.x += side.x * 0.015;
-				newPos.y += side.y * 0.015;
-				newPos.z += side.z * 0.015;
+				newPos.x += side.x * 0.05;
+				newPos.y += side.y * 0.05;
+				newPos.z += side.z * 0.05;
 			}
 			else {
 				newPos.x += side.x * 0.01;
@@ -494,66 +495,24 @@ public:
 
 		}
 
-		det1 = XMFLOAT3(newPos.x - 0.5, newPos.y, newPos.z + 0.5);
-		det3 = XMFLOAT3(newPos.x - 0.5, newPos.y, newPos.z - 0.5);
-		det2 = XMFLOAT3(newPos.x + 0.5, newPos.y, newPos.z + 0.5);
-		det4 = XMFLOAT3(newPos.x + 0.5, newPos.y, newPos.z - 0.5);
+		//four detections for wall collision -ML
+		det1 = XMFLOAT3(newPos.x - 0.2, newPos.y, newPos.z + 0.2);
+		det3 = XMFLOAT3(newPos.x - 0.2, newPos.y, newPos.z - 0.2);
+		det2 = XMFLOAT3(newPos.x + 0.2, newPos.y, newPos.z + 0.2);
+		det4 = XMFLOAT3(newPos.x + 0.2, newPos.y, newPos.z - 0.2);
 
-		
 
-		//COLLISION DETECTION
-		BYTE colorMatch = leveldata->get_pixel(-(newPos.x) / 2 + 50.5, -(newPos.z) / 2 + .5, 0);
-		if (colorMatch < 10)
-		{
-			position = newPos;
-		}
-
-		/*
-		if (leveldata->isWalkable(newPos)) {
-		position = newPos;
-		}
-		else {
-		position = position;
-		}
-		*/
-
-		//NEW WALL COLLISION DETECTION -ML
-		//BETA VERSION
-		///////////////////////////////////
-		/*
-		if (leveldata->isWalkable(det1)) {
-			position = newPos;
-		}
-		else if (leveldata->isWalkable(det2)) {
-			position = newPos;
-		}
-		else if (leveldata->isWalkable(det3)) {
-			position = newPos;
-		}
-		else if (leveldata->isWalkable(det4)) {
+		//========================= NEW COLLISION DETECTION -ML =======================================//
+		//player/camera no longer sees through the wall when hitting a wall using 2 detections -ML
+		if (leveldata->isWalkable(det1) && leveldata->isWalkable(det4)) {
 			position = newPos;
 		}
 		else {
 			position = position;
 		}
-		*/
+		//==============================================================================================//
 
-		//END NEW WALL COLLISION
-		////////////////////////////////
 	}
-
-
-
-	/*if (d)
-	{
-	rotation.y -= 0.005;
-	}
-	if (a)
-	{
-	rotation.y += 0.005;
-	}*/
-
-
 
 
 	XMMATRIX get_matrix(XMMATRIX *view)

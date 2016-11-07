@@ -15,15 +15,15 @@ TEAM MEMBERS:
 
 Features Completed:
 *****11/3/16*************************************
-	Maze Design
-	Skybox Implementation (Sphere)
-	Shooting Mechanic
+	Maze Design - Ana created the bitmap from scratch
+	Skybox Implementation (Sphere) -Ediberto added the sky sphere
+	Shooting Mechanic - Salvador upgraded the shooting to have multiple bullets at once
 		Fire Multiple Shots
-	Collision Detection with walls
-	Addition of Heads Up Display(HUD)
+	Collision Detection with walls - Maria upgraded the walls. The camera no longer passes through the walls.
+	Addition of Heads Up Display(HUD) -Maria added the HUD and the ability to change the color.
 		HUD displays current color
-		Crosshairs in center of screen
-	New wall textures
+		Crosshairs in center of screen - Salvador added the crosshair to the frame/HUD texture.
+	New wall textures -Ediberto looked up and added the new textures.
 	Addition of Enemies
 *************************************************
 	
@@ -369,7 +369,7 @@ HRESULT InitDevice()
 	if (FAILED(hr))
 		return hr;
 
-	//compile PS_frame shader
+	//================================================== compile PS_frame shader -ML ===============================================================//
 	pPSBlob = NULL;
 	hr = CompileShaderFromFile(L"shader.fx", "PS_frame", "ps_4_0", &pPSBlob);
 	if (FAILED(hr))
@@ -384,6 +384,7 @@ HRESULT InitDevice()
 	pPSBlob->Release();
 	if (FAILED(hr))
 		return hr;
+	//================================================================================================================================================//
 
 	//create skybox vertex buffer
 	SimpleVertex vertices_skybox[] =
@@ -578,9 +579,8 @@ HRESULT InitDevice()
 	g_pd3dDevice->CreateDepthStencilState(&DS_ON, &ds_on);
 	g_pd3dDevice->CreateDepthStencilState(&DS_OFF, &ds_off);
 
-	//in progress
-	//level1.init("Bitmap-2.bmp"); //-AP
-	level1.init("level.bmp");
+	level1.init("Bitmap-2.bmp"); //-AP
+	//level1.init("level.bmp");
 	level1.init_texture(g_pd3dDevice, L"w1.jpg");
 	level1.init_texture(g_pd3dDevice, L"w1.jpg");
 	level1.init_texture(g_pd3dDevice, L"floor.jpg");
@@ -623,7 +623,7 @@ void CleanupDevice()
 	if (g_pSamplerLinear) g_pSamplerLinear->Release();
 	if (g_pTextureRV) g_pTextureRV->Release();
 	if (g_pTextureRV_frame) g_pTextureRV_frame->Release();
-	if (g_pTextureRV_crosshairs) g_pTextureRV_crosshairs->Release();
+	if (g_pTextureRV_crosshairs) g_pTextureRV_crosshairs->Release(); //-ML
 
 	if (g_pCBuffer) g_pCBuffer->Release();
 	if (g_pVertexBuffer) g_pVertexBuffer->Release();
@@ -859,7 +859,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 		HANDLE_MSG(hWnd, WM_LBUTTONDOWN, OnLBD);
-		HANDLE_MSG(hWnd, WM_RBUTTONDOWN, OnRBD);
+		HANDLE_MSG(hWnd, WM_RBUTTONDOWN, OnRBD); // RBD added -ML
 		HANDLE_MSG(hWnd, WM_LBUTTONUP, OnLBU);
 		HANDLE_MSG(hWnd, WM_MOUSEMOVE, OnMM);
 		HANDLE_MSG(hWnd, WM_CREATE, OnCreate);
@@ -953,7 +953,7 @@ void Render()
 	// Clear the depth buffer to 1.0 (max depth)
 	g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	cam.animation(level1.get_bitmap());//pass the bitmap to the camera *NEW*
+	cam.animation(&level1);//pass the level -ML
 
 
 	XMMATRIX view = cam.get_matrix(&g_View);
@@ -965,7 +965,7 @@ void Render()
 
 
 
-	/// Update skybox constant buffer
+	// Update skybox constant buffer
 	ConstantBuffer constantbuffer;
 	constantbuffer.World = XMMatrixTranspose(XMMatrixScaling(1, 1, 1));
 	constantbuffer.View = XMMatrixTranspose(view);
