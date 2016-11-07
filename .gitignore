@@ -2,4 +2,4 @@
 *.db
 
 #Excludes the debug folder
-Debug/
+/Debug/
