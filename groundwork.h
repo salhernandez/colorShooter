@@ -434,20 +434,23 @@ public:
 
 		XMFLOAT3 det1, det2, det3, det4;
 
+		//more modular
+		float regMove = 0.02;
+		float shiftMove = 0.05;
 		//hold SHIFT for sprint -SH
 		/////////////////////////////
 		if (w)
 		{
 			if (shift) {// -SH
-				newPos.x -= forward.x * 0.05;
-				newPos.y -= forward.y * 0.05;
-				newPos.z -= forward.z * 0.05;
+				newPos.x -= forward.x * shiftMove;
+				newPos.y -= forward.y * shiftMove;
+				newPos.z -= forward.z * shiftMove;
 			}
 
 			else {
-				newPos.x -= forward.x * 0.01;
-				newPos.y -= forward.y * 0.01;
-				newPos.z -= forward.z * 0.01;
+				newPos.x -= forward.x * regMove;
+				newPos.y -= forward.y * regMove;
+				newPos.z -= forward.z * regMove;
 			}
 		}
 		//old speeds shift - 0.015 w/o shift - 0.001 -ML
@@ -455,42 +458,42 @@ public:
 		if (s)
 		{
 			if (shift) {// -SH
-				newPos.x += forward.x * 0.05;
-				newPos.y += forward.y * 0.05;
-				newPos.z += forward.z * 0.05;
+				newPos.x += forward.x * shiftMove;
+				newPos.y += forward.y * shiftMove;
+				newPos.z += forward.z * shiftMove;
 			}
 			else {
 
-				newPos.x += forward.x * 0.01;
-				newPos.y += forward.y * 0.01;
-				newPos.z += forward.z * 0.01;
+				newPos.x += forward.x * regMove;
+				newPos.y += forward.y * regMove;
+				newPos.z += forward.z * regMove;
 			}
 		}
 		if (d)
 		{
 			if (shift) {// -SH
-				newPos.x -= side.x * 0.05;
-				newPos.y -= side.y * 0.05;
-				newPos.z -= side.z * 0.05;
+				newPos.x -= side.x * shiftMove;
+				newPos.y -= side.y * shiftMove;
+				newPos.z -= side.z * shiftMove;
 
 			}
 			else {
-				newPos.x -= side.x * 0.01;
-				newPos.y -= side.y * 0.01;
-				newPos.z -= side.z * 0.01;
+				newPos.x -= side.x * regMove;
+				newPos.y -= side.y * regMove;
+				newPos.z -= side.z * regMove;
 			}
 		}
 		if (a)
 		{
 			if (shift) {// -SH
-				newPos.x += side.x * 0.05;
-				newPos.y += side.y * 0.05;
-				newPos.z += side.z * 0.05;
+				newPos.x += side.x * shiftMove;
+				newPos.y += side.y * shiftMove;
+				newPos.z += side.z * shiftMove;
 			}
 			else {
-				newPos.x += side.x * 0.01;
-				newPos.y += side.y * 0.01;
-				newPos.z += side.z * 0.01;
+				newPos.x += side.x * regMove;
+				newPos.y += side.y * regMove;
+				newPos.z += side.z * regMove;
 			}
 
 		}
