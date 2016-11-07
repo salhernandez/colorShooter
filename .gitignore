@@ -1,0 +1,5 @@
+#Excludes the large database file
+*.db
+
+#Excludes the debug folder
+Debug/
