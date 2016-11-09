@@ -1034,6 +1034,33 @@ void Render()
 		//constantbuffer.info = XMFLOAT4(smokeray[ii]->transparency, 1, 1, 1);
 		g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
 
+
+		//ENEMY BULLET COLLISION 
+		//SH & AP
+		//////////////////////////////////////////////////////////////
+		XMFLOAT3 diff;
+
+		for (int jj = 0; jj < enemies.size(); jj++) {
+			diff.x = bullets[ii]->pos.x - enemies[jj]->position.x;
+			diff.y = bullets[ii]->pos.y - enemies[jj]->position.y;
+			diff.z = bullets[ii]->pos.z - enemies[jj]->position.z;
+
+			//ok, now calculate the length of the vector :
+			float length = sqrt(diff.x* diff.x + diff.y* diff.y + diff.z* diff.z);
+
+			//and ask if the length is smaller than a certain minimum distance, then you have a collision :
+
+			//for now, the game quits when an enemy is hit
+			if (length < 1) //0.2 is just a guess
+			{
+				//collision
+				//this will later be replaced with the desired result
+				PostQuitMessage(0);
+			}
+		//END ENEMY BULLET COLLISION
+		////////////////////////////////////////////////////////////////
+		}
+
 		g_pImmediateContext->Draw(12, 0);
 	}
 	//END FIRE MULTIPLE BULLETS
