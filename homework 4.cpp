@@ -6,10 +6,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 #include "groundwork.h"
-//ana's first commit
-//eddie's first commit
-//another commit
-//test visual studio github
 /*
 TEAM MEMBERS: 
 	Ediberto Cruz: EC
