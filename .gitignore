@@ -4,5 +4,5 @@
 #Excludes the debug folder
 /Debug/
 
-#ignore .vs
-/.vs/
+#ignore
+lecture 8_2010.VC.VC.opendb
