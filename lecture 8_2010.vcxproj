@@ -376,8 +376,13 @@
     <FxCompile Include="explosion_shader.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
     </FxCompile>
+    <FxCompile Include="Font_FX.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS</EntryPointName>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="homework 4.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +390,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="explosion.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="groundwork.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="homework 8.rc" />

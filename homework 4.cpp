@@ -7,6 +7,7 @@
 //--------------------------------------------------------------------------------------
 #include "groundwork.h"
 #include "explosion.h"
+#include "Font.h"
 /*
 TEAM MEMBERS: 
 	Ediberto Cruz: EC
@@ -88,10 +89,13 @@ vector<bullet*>					    bullets;
 bool static currColorCheck = false;
 XMFLOAT4 frameColor(0, 0, 1, 0);
 
-//FOR EXPLOSION
+//FOR EXPLOSION -SH
 /////////////////////////////
 explosion_handler  explosionhandler;
-////////////////////////////
+
+//FOR Font -SH
+/////////////////////////////
+Font font;
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -613,6 +617,10 @@ HRESULT InitDevice()
 	//added for sky sphere -EC
 	LoadCatmullClark(L"ccsphere.cmp", g_pd3dDevice, &g_pVertexBuffer_sky, &skyCount);
 
+
+	//ADDED FOR FONT -SH
+	//////////////////////////
+	font.init(g_pd3dDevice, g_pImmediateContext, font.defaultFontMapDesc);
 	//FOR EXPLOSION
 	/////////////////////////////////////////
 	explosionhandler.init(g_pd3dDevice, g_pImmediateContext);
@@ -1088,6 +1096,7 @@ void Render()
 	//END FIRE MULTIPLE BULLETS
 	/////////////////////////////////////////////////////////////
 
+	//set before the frame because otherwise it will interfere with the frame itself
 	//FOR EXPLOSION
 	//////////////////////////////////////////////
 	g_pImmediateContext->OMSetDepthStencilState(ds_off, 1);
@@ -1096,6 +1105,7 @@ void Render()
 	g_pImmediateContext->OMSetDepthStencilState(ds_on, 1);
 	//////////////////////////////////////////////
 
+	
 	//================================================ border frame for camera -ML =======================================================//
 	// Update frame constant buffer
 	//World, View, and Projection needs to have the Identity matrix to have the texture on the screen
@@ -1117,6 +1127,11 @@ void Render()
 
 	g_pImmediateContext->Draw(36, 0);
 	//=================================================================================================================================//
+
+	//DISPLAYS INFORMATION -SH
+	/////////////////////////////////
+	//it slows down the program
+	//font << "TEST";
 
 
 	g_pSwapChain->Present(0, 0);
