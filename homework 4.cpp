@@ -1088,6 +1088,14 @@ void Render()
 	//END FIRE MULTIPLE BULLETS
 	/////////////////////////////////////////////////////////////
 
+	//FOR EXPLOSION
+	//////////////////////////////////////////////
+	g_pImmediateContext->OMSetDepthStencilState(ds_off, 1);
+	explosionhandler.render(&view, &g_Projection, elapsed);
+	g_pImmediateContext->IASetInputLayout(g_pVertexLayout);
+	g_pImmediateContext->OMSetDepthStencilState(ds_on, 1);
+	//////////////////////////////////////////////
+
 	//================================================ border frame for camera -ML =======================================================//
 	// Update frame constant buffer
 	//World, View, and Projection needs to have the Identity matrix to have the texture on the screen
@@ -1105,16 +1113,6 @@ void Render()
 	g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV_frame); //this texture goes to a different PS shader than the default
 																		  //g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer_sky, &stride, &offset);
 	g_pImmediateContext->PSSetSamplers(0, 1, &g_pSamplerLinear);
-
-
-	//FOR EXPLOSION
-	//////////////////////////////////////////////
-	g_pImmediateContext->OMSetDepthStencilState(ds_off, 1);
-	explosionhandler.render(&view, &g_Projection, elapsed);
-	g_pImmediateContext->IASetInputLayout(g_pVertexLayout);
-	g_pImmediateContext->OMSetDepthStencilState(ds_on, 1);
-	//////////////////////////////////////////////
-
 
 
 	g_pImmediateContext->Draw(36, 0);
