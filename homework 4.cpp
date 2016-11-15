@@ -6,6 +6,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 #include "groundwork.h"
+#include "explosion.h"
 /*
 TEAM MEMBERS: 
 	Ediberto Cruz: EC
@@ -87,7 +88,10 @@ vector<bullet*>					    bullets;
 bool static currColorCheck = false;
 XMFLOAT4 frameColor(0, 0, 1, 0);
 
-
+//FOR EXPLOSION
+/////////////////////////////
+explosion_handler  explosionhandler;
+////////////////////////////
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -609,6 +613,16 @@ HRESULT InitDevice()
 	//added for sky sphere -EC
 	LoadCatmullClark(L"ccsphere.cmp", g_pd3dDevice, &g_pVertexBuffer_sky, &skyCount);
 
+	//FOR EXPLOSION
+	/////////////////////////////////////////
+	explosionhandler.init(g_pd3dDevice, g_pImmediateContext);
+
+	//initialize explosion
+	explosionhandler.init_types(L"exp1.dds", 8, 8, 1000000);		                  //<-1. argument: filename of the animated image
+		//																			   2. argument: count of subparts of the image in x
+		//																			   3. argument: count of subparts of the image in y
+		//																			   4. argument: lifespan in microsecond
+	//////////////////////////////////////////////
 	return S_OK;
 }
 
@@ -1054,7 +1068,16 @@ void Render()
 			{
 				//collision
 				//this will later be replaced with the desired result
-				PostQuitMessage(0);
+				//PostQuitMessage(0);
+
+				//ADDS FIRE TO THE ENEMY
+				//-SH
+				//////////////////////////////
+				explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0,0,0), 1, 4.0);	                   //<-1. argument: position
+					//																							2. argument: impulse in unit per second
+					//																							3. argument: type of explosions (how many have you initialized?) starting with 0
+					//																							4. argument: scaling of the explosion
+				/////////////////////
 			}
 		//END ENEMY BULLET COLLISION
 		////////////////////////////////////////////////////////////////
@@ -1082,6 +1105,16 @@ void Render()
 	g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV_frame); //this texture goes to a different PS shader than the default
 																		  //g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer_sky, &stride, &offset);
 	g_pImmediateContext->PSSetSamplers(0, 1, &g_pSamplerLinear);
+
+
+	//FOR EXPLOSION
+	//////////////////////////////////////////////
+	g_pImmediateContext->OMSetDepthStencilState(ds_off, 1);
+	explosionhandler.render(&view, &g_Projection, elapsed);
+	g_pImmediateContext->IASetInputLayout(g_pVertexLayout);
+	g_pImmediateContext->OMSetDepthStencilState(ds_on, 1);
+	//////////////////////////////////////////////
+
 
 
 	g_pImmediateContext->Draw(36, 0);
