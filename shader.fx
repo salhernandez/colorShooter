@@ -19,6 +19,7 @@ cbuffer ConstantBuffer : register(b0)
 	float4 info;
 	float4 colorChanger; //-ML
 	float4 enemyColorChanger; //-SH
+	float4 bulletColorChanger; //-SH
 
 };
 //must be mult number four floats
@@ -121,12 +122,12 @@ float4 PS_bullets(PS_INPUT input) : SV_Target
 	float4 color = txDiffuse.Sample(samLinear, input.Tex);
 
 	//if color is blue
-	if (colorChanger.b == 1) {
+	if (bulletColorChanger.b == 1) {
 		color.b = .5;
 	}
 
 	//if color is red
-	if (colorChanger.r == 1) {
+	if (bulletColorChanger.r == 1) {
 		color.r = 1;
 	}
 	return color;

@@ -85,6 +85,7 @@ public:
 	XMFLOAT4 info;
 	XMFLOAT4 colorChanger; //-ML
 	XMFLOAT4 enemyColorChanger; //-SH
+	XMFLOAT4 bulletColorChanger; //-SH
 };
 
 class StopWatchMicro_

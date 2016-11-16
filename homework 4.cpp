@@ -92,6 +92,10 @@ vector<bullet*>					    bullets;
 bool static currColorCheck = false;
 XMFLOAT4 frameColor(0, 0, 1, 0);
 
+//needed for bullet color change
+bool static spacebar = false;
+XMFLOAT4 bulletColor(0, 0, 1, 0);
+
 //needed for enemy color change -SH
 XMFLOAT4 enemyColor(0, 0, 1, 0);
 
@@ -902,6 +906,18 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	case 68: cam.d = 1;//d
 		break;
 	case 32: //space
+
+		//CHANGES BULLET COLOR -SH
+		////////////////////////////////////
+		if(spacebar == false) {
+			bulletColor = XMFLOAT4(1, 0, 0, 0);
+			spacebar = true;
+		}
+		else {
+			bulletColor = XMFLOAT4(0, 0, 1, 0);
+			spacebar = false;
+		}
+		////////////////////////////////////
 		break;
 	case 87: cam.w = 1; //w
 		break;
@@ -1129,7 +1145,9 @@ void Render()
 	{
 		worldmatrix = bullets[ii]->getmatrix(elapsed, view);
 		
-		constantbuffer.colorChanger = frameColor; //sends the current frame color, can be manupilated with RBD -ML
+		//if the player does not like to have to switch bullet colors as well
+		//change bulletColor to frameColor
+		constantbuffer.bulletColorChanger = bulletColor; //sends the current bullet color to the Pixel Shader -SH
 		g_pImmediateContext->PSSetShader(g_pPixelShader_bullets, NULL, 0); //added pixel shader for bullets
 
 		g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV1);
