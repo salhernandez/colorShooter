@@ -55,7 +55,6 @@ ID3D11VertexShader*                 g_pVertexShader = NULL;
 ID3D11PixelShader*                  g_pPixelShader = NULL;
 ID3D11PixelShader*                  g_pPixelShader_frame = NULL; //pixel shader for the frame -ML
 ID3D11PixelShader*                  g_pPixelShader_enemies = NULL; //pixel shader for the enemies -SH
-ID3D11PixelShader*                  g_pPixelShader_bullets = NULL; //pixel shader for the bullets -SH
 
 ID3D11InputLayout*                  g_pVertexLayout = NULL;
 ID3D11Buffer*                       g_pVertexBuffer = NULL;
@@ -412,23 +411,6 @@ HRESULT InitDevice()
 
 	// Create the pixel shader named PS_frame
 	hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &g_pPixelShader_enemies);
-	pPSBlob->Release();
-	if (FAILED(hr))
-		return hr;
-	//================================================================================================================================================//
-
-	//================================================== compile PS_bullet shader -SH ===============================================================//
-	pPSBlob = NULL;
-	hr = CompileShaderFromFile(L"shader.fx", "PS_bullets", "ps_4_0", &pPSBlob);
-	if (FAILED(hr))
-	{
-		MessageBox(NULL,
-			L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
-		return hr;
-	}
-
-	// Create the pixel shader named PS_frame
-	hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), NULL, &g_pPixelShader_bullets);
 	pPSBlob->Release();
 	if (FAILED(hr))
 		return hr;
@@ -997,18 +979,16 @@ if(length<minimum_length)*/
 // Render a frame
 //--------------------------------------------------------------------------------------
 boolean colorSwitch = true;
-
-//added for enemy color change -SH
-/////////////////////////////////
+static int timer = 0;
 int minSecs = 10;
-int maxSecs = 15;
 void Render()
 {
 	static StopWatchMicro_ stopwatch;
 	long elapsed = stopwatch.elapse_micro();
 	//long elapsedMillis = stopwatch.elapse_milli();
 	stopwatch.start();//restart
-	//timer += elapsed 
+
+	timer += elapsed / 10000;
 
 	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
@@ -1016,27 +996,24 @@ void Render()
 
 	// Update our time
 	static float t = 0.0f;
-	
-	//in the future change it so that the timer based on actual seconds
-	//changed to represent secs
-	t += 0.01;
+	t += 0.001;
 
 	//t equals seconds
-	//CHANGE ENEMY COLOR -SH
+	//to change enemy color -SH
 	///////////////////////////
-	int range = maxSecs - minSecs + 1;
+	int range = 15 - minSecs + 1;
 	int num = rand() % range + minSecs;
 
-	//FIX THE TIMING IN THE FUTURE
-	if (t >= num) {
+	if (timer >= num) {
 		if(colorSwitch)
 			enemyColor = XMFLOAT4(1, 0, 0, 0);
 		else
 			enemyColor = XMFLOAT4(0, 0, 1, 0);
 		
 		colorSwitch = !colorSwitch;
-		t = 0;
+		timer = 0;
 	}
+
 	///////////////////////////
 
 	// Clear the back buffer
@@ -1098,7 +1075,7 @@ void Render()
 
 
 	//ENEMIES
-	//enemies have their own pixel shader
+	//for each enemy.....new texture?
 	//////////////////////////////////////////////////
 
 	//to pass in the proper color for the enemy -SH
@@ -1128,10 +1105,6 @@ void Render()
 	for (int ii = 0; ii < bullets.size(); ii++)
 	{
 		worldmatrix = bullets[ii]->getmatrix(elapsed, view);
-		
-		constantbuffer.colorChanger = frameColor; //sends the current frame color, can be manupilated with RBD -ML
-		g_pImmediateContext->PSSetShader(g_pPixelShader_bullets, NULL, 0); //added pixel shader for bullets
-
 		g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV1);
 		constantbuffer.World = XMMatrixTranspose(worldmatrix);
 		constantbuffer.View = XMMatrixTranspose(view);
@@ -1154,9 +1127,15 @@ void Render()
 			//ok, now calculate the length of the vector :
 			float length = sqrt(diff.x* diff.x + diff.y* diff.y + diff.z* diff.z);
 
-			//calculated distance...COLLISION
-			if (length < 1) 
+			//and ask if the length is smaller than a certain minimum distance, then you have a collision :
+
+			//for now, the game quits when an enemy is hit
+			if (length < 1) //0.2 is just a guess
 			{
+				//collision
+				//this will later be replaced with the desired result
+				//PostQuitMessage(0);
+
 				//ADDS FIRE TO THE ENEMY
 				//-SH
 				//////////////////////////////

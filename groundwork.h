@@ -83,7 +83,8 @@ public:
 	XMMATRIX View;
 	XMMATRIX Projection;
 	XMFLOAT4 info;
-	XMFLOAT4 colorChanger;
+	XMFLOAT4 colorChanger; //-ML
+	XMFLOAT4 enemyColorChanger; //-SH
 };
 
 class StopWatchMicro_

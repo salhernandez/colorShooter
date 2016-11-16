@@ -17,7 +17,8 @@ cbuffer ConstantBuffer : register(b0)
 	matrix View;
 	matrix Projection;
 	float4 info;
-	float4 colorChanger;
+	float4 colorChanger; //-ML
+	float4 enemyColorChanger; //-SH
 
 };
 //must be mult number four floats
@@ -64,6 +65,8 @@ float4 PS(PS_INPUT input) : SV_Target
 	return color;
 }
 
+//PIXEL SHADER FOR FRAME -ML
+//////////////////////////////////////////////////////////////////////
 float4 PS_frame(PS_INPUT input) : SV_Target
 {
 	float4 color = txDiffuse.Sample(samLinear, input.Tex);
@@ -90,3 +93,42 @@ float4 PS_frame(PS_INPUT input) : SV_Target
 	//color = depth;// (depth*0.9 + 0.02);
 	return color;
 }
+///////////////////////////////////////////////////////////////////////
+
+//PIXEL SHADER FOR ENEMIES -SH
+////////////////////////////////////////////////////////////////////////
+float4 PS_enemies(PS_INPUT input) : SV_Target
+{
+	float4 color = txDiffuse.Sample(samLinear, input.Tex);
+
+	//if color is blue
+	if (enemyColorChanger.b == 1) {
+		color.b = .5;
+	}
+
+	//if color is red
+	if (enemyColorChanger.r == 1) {
+		color.r = .5;
+	}
+	return color;
+}
+//////////////////////////////////////////////////////////////////////////
+
+//PIXEL SHADER FOR BULLET -SH
+////////////////////////////////////////////////////////////////////////
+float4 PS_bullets(PS_INPUT input) : SV_Target
+{
+	float4 color = txDiffuse.Sample(samLinear, input.Tex);
+
+	//if color is blue
+	if (colorChanger.b == 1) {
+		color.b = .5;
+	}
+
+	//if color is red
+	if (colorChanger.r == 1) {
+		color.r = 1;
+	}
+	return color;
+}
+//////////////////////////////////////////////////////////////////////////

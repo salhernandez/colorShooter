@@ -24,6 +24,7 @@
     <ClInclude Include="groundwork.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="sound.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.fx">

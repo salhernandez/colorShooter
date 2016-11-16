@@ -393,6 +393,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="groundwork.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="sound.h" />
     <ResourceCompile Include="homework 8.rc" />
   </ItemGroup>
   <ItemGroup>
