@@ -1064,7 +1064,6 @@ void Render()
 
 	cam.animation(&level1);//pass the level -ML
 
-
 	XMMATRIX view = cam.get_matrix(&g_View);
 	XMMATRIX worldmatrix;
 
@@ -1117,6 +1116,8 @@ void Render()
 	//enemies have their own pixel shader
 	//////////////////////////////////////////////////
 
+
+
 	//to pass in the proper color for the enemy -SH
 	constantbuffer.enemyColorChanger = enemyColor;
 
@@ -1129,8 +1130,17 @@ void Render()
 	g_pImmediateContext->PSSetSamplers(0, 1, &g_pSamplerLinear);
 
 	//DRAW ENEMIES
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < enemies.size(); i++) {
 		VR = enemies[i]->get_matrix(view);
+
+		//ENEMY COLLISION WITH WALL -SH
+		//////////////////////////////////////////////
+		if (level1.isWalkable(enemies[i]->position)) {
+			//do something when it hits a wall
+
+		}
+		//////////////////////////////////////////////
+
 
 		constantbuffer.World = XMMatrixTranspose(VR);
 		g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
@@ -1147,7 +1157,8 @@ void Render()
 		
 		//if the player does not like to have to switch bullet colors as well
 		//change bulletColor to frameColor
-		constantbuffer.bulletColorChanger = bulletColor; //sends the current bullet color to the Pixel Shader -SH
+		//bulletColor
+		constantbuffer.bulletColorChanger = frameColor; //sends the current bullet color to the Pixel Shader -SH
 		g_pImmediateContext->PSSetShader(g_pPixelShader_bullets, NULL, 0); //added pixel shader for bullets
 
 		g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV1);
