@@ -853,8 +853,8 @@ BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 		enemies.push_back(new billboard());
 	}
 	enemies[0]->position = XMFLOAT3(0, 0, 5);
-	enemies[1]->position = XMFLOAT3(-6, 0, 12);
-	enemies[2]->position = XMFLOAT3(-6, 0, 18);
+	enemies[1]->position = XMFLOAT3(0, 0, 12);
+	enemies[2]->position = XMFLOAT3(2, 0, 9);
 	enemies[3]->position = XMFLOAT3(2, 0, 12);
 	enemies[4]->position = XMFLOAT3(-3, 0, 12);
 
@@ -1185,7 +1185,9 @@ void Render()
 			//pops the enemy
 			if (length < 0.5)
 			{
-				enemies.pop_back();
+				//enemies.pop_back();
+				//erase the eneny 
+				enemies.erase(enemies.begin() + ii);
 
 			}
 			//calculated distance...COLLISION
