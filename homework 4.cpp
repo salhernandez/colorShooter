@@ -853,8 +853,8 @@ BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 		enemies.push_back(new billboard());
 	}
 	enemies[0]->position = XMFLOAT3(0, 0, 5);
-	enemies[1]->position = XMFLOAT3(0, 0, 12);
-	enemies[2]->position = XMFLOAT3(2, 0, 9);
+	enemies[1]->position = XMFLOAT3(-2, 0,8.5 );
+	enemies[2]->position = XMFLOAT3(2, 0, 8.5);
 	enemies[3]->position = XMFLOAT3(2, 0, 12);
 	enemies[4]->position = XMFLOAT3(-3, 0, 12);
 
@@ -1183,11 +1183,12 @@ void Render()
 			//ok, now calculate the length of the vector :
 			float length = sqrt(diff.x* diff.x + diff.y* diff.y + diff.z* diff.z);
 			//pops the enemy
+			
 			if (length < 0.5)
 			{
 				//enemies.pop_back();
 				//erase the eneny 
-				enemies.erase(enemies.begin() + ii);
+				enemies.erase(enemies.begin()+ jj);
 
 			}
 			//calculated distance...COLLISION
