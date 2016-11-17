@@ -1182,7 +1182,11 @@ void Render()
 
 			//ok, now calculate the length of the vector :
 			float length = sqrt(diff.x* diff.x + diff.y* diff.y + diff.z* diff.z);
+			if (length < 0.5)
+			{
+				enemies.pop_back();
 
+			}
 			//calculated distance...COLLISION
 			if (length < 1) 
 			{
