@@ -733,7 +733,7 @@ void OnLBD(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 
 	//added for sound effect
 	//still needs work, it crashes when the sound is done playing
-	//start_music(L"shotgunBlast.mp3");
+	start_music(L"shotgunBlast.mp3");
 }
 ///////////////////////////////////
 //		This Function is called every time the Right Mouse Button is down
@@ -1240,7 +1240,6 @@ void Render()
 	/////////////////////////////////
 	//it slows down the program
 	//font << "TEST";
-
 
 	g_pSwapChain->Present(0, 0);
 }

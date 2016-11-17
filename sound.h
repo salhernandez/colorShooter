@@ -21,7 +21,7 @@ DWORD WINAPI runThread(LPVOID args)
 {
 	LPWSTR ccall = reinterpret_cast<LPWSTR>(args);
 	run_mp3_thread(ccall);
-	delete[] ccall;
+	//delete[] ccall;
 	return 0;
 }
 void start_music(LPWSTR file)
