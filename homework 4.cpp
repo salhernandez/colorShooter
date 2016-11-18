@@ -631,7 +631,8 @@ HRESULT InitDevice()
 	g_pd3dDevice->CreateDepthStencilState(&DS_ON, &ds_on);
 	g_pd3dDevice->CreateDepthStencilState(&DS_OFF, &ds_off);
 
-	level1.init("Bitmap-2.bmp"); //-AP
+	//level1.init("Bitmap-2.bmp"); //-AP
+	level1.init("noRoof.bmp"); //-AP
 	//level1.init("level.bmp");
 	level1.init_texture(g_pd3dDevice, L"w1.jpg");
 	level1.init_texture(g_pd3dDevice, L"w1.jpg");
