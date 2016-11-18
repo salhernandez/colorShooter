@@ -33,8 +33,9 @@ Features Completed:
 2nd Milestone Completed:
 -----11/17/16------------------------------------
 	Enemy now moves from 3 different waypoints and doesn't run to into any walls. -Maria and Ana
-	
-	
+	Enemy now changes color after a certain amount of time -SH
+	Added Explosions when enemy is hit -SH & -EC
+	Added sounds when firing bullet -SH & -EC
 */
 
 
