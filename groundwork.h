@@ -117,6 +117,11 @@ public:
 		QueryPerformanceCounter(&last);
 	}
 };
+//---------For billboard activation -ML-------------
+enum billActive {
+	ACTIVE, INACTIVE
+};
+//--------------------------------------------------
 class billboard
 {
 public:
@@ -125,10 +130,12 @@ public:
 		position = XMFLOAT3(0, 0, 0);
 		scale = 1;
 		transparency = 1;
+		activation = ACTIVE; //activates billboard to draw it -ML
 	}
 	XMFLOAT3 position; //obvious
 	float scale;		//in case it can grow
 	float transparency; //for later use
+	billActive activation; //determines if the billboard is active or not for drawing - ML
 	XMMATRIX get_matrix(XMMATRIX &ViewMatrix)
 	{
 

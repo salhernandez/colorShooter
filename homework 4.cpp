@@ -127,6 +127,8 @@ explosion_handler  explosionhandler;
 Font font;
 
 //-----ememy movement and collison -ML & AP -----------------
+
+
 enum enemyName {
 	A, B, C, D, E
 };
@@ -169,11 +171,26 @@ void createEnemies() {
 		enemies.push_back(new billboard());
 	}
 	enemies[0]->position = XMFLOAT3(0, 0, 5); //front A
+	enemies[0]->activation = ACTIVE;
 	enemies[1]->position = XMFLOAT3(-10, 0, 32); //back B
+	enemies[1]->activation = ACTIVE;
 	enemies[2]->position = XMFLOAT3(-6, 0, 18); //middle left C
+	enemies[2]->activation = ACTIVE;
 	enemies[3]->position = XMFLOAT3(3, 0, 14); //middle right D
+	enemies[3]->activation = ACTIVE;
 	enemies[4]->position = XMFLOAT3(16, 0, 12); //far left E
+	enemies[4]->activation = ACTIVE;
 	
+}
+
+bool active(enemyName enName) {
+	if (enName == A) {
+		if (enemies[0]->activation == ACTIVE)
+			return true;
+	}
+	else {
+		return false;
+	}
 }
 
 XMFLOAT3 getNextWaypoint(enemyName enName) {
@@ -297,7 +314,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//-----for enemy movement and collision -ML & AP----------
 	initGraph();
 	createEnemies();
-	preWalking(A);
+	if (active(A)) {
+		preWalking(A); //starts walking if enemy is active
+	}
+	
 	//--------------------------------------------------------
 
 
@@ -1234,7 +1254,10 @@ void Render()
 
 	cam.animation(&level1);//pass the level -ML
 
-	startWalking(A); //enemy movement and collision -ML & AP
+	if (active(A)) { //continues walking if enemy is active -ML
+		startWalking(A); //enemy movement and collision -ML & AP
+	}
+	
 
 	XMMATRIX view = cam.get_matrix(&g_View);
 	XMMATRIX worldmatrix;
@@ -1303,20 +1326,23 @@ void Render()
 
 	//DRAW ENEMIES
 	for (int i = 0; i < enemies.size(); i++) {
-		VR = enemies[i]->get_matrix(view);
+		if (enemies[i]->activation == ACTIVE) { //draws enemies if they are active -ML
+			VR = enemies[i]->get_matrix(view);
 
-		//ENEMY COLLISION WITH WALL -SH
-		//////////////////////////////////////////////
-		if (level1.isWalkable(enemies[i]->position)) {
-			//do something when it hits a wall
+			//ENEMY COLLISION WITH WALL -SH
+			//////////////////////////////////////////////
+			if (level1.isWalkable(enemies[i]->position)) {
+				//do something when it hits a wall
 
+			}
+			//////////////////////////////////////////////
+
+
+			constantbuffer.World = XMMatrixTranspose(VR);
+			g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
+			g_pImmediateContext->Draw(12, 0);
 		}
-		//////////////////////////////////////////////
-
-
-		constantbuffer.World = XMMatrixTranspose(VR);
-		g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
-		g_pImmediateContext->Draw(12, 0);
+		
 	}
 
 	///////////////////////////////////////////
@@ -1362,7 +1388,11 @@ void Render()
 			{
 				//enemies.pop_back();
 				//erase the eneny 
+				enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
 				//enemies.erase(enemies.begin()+ jj);
+			}
+			else {
+
 			}
 			///////////////////////////////////////
 
