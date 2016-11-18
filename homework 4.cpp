@@ -1185,13 +1185,16 @@ void Render()
 			float length = sqrt(diff.x* diff.x + diff.y* diff.y + diff.z* diff.z);
 			//pops the enemy
 			
+			//Delete the enemy on hit -EC
+			//////////////////////////
 			if (length < 0.5)
 			{
 				//enemies.pop_back();
 				//erase the eneny 
 				enemies.erase(enemies.begin()+ jj);
-
 			}
+			///////////////////////////////////////
+
 			//calculated distance...COLLISION
 			if (length < 1) 
 			{
