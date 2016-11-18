@@ -29,6 +29,10 @@ Features Completed:
 	New wall textures -Ediberto looked up and added the new textures.
 	Addition of Enemies
 *************************************************
+
+2nd Milestone Completed:
+-----11/17/16------------------------------------
+	Enemy now moves from 3 different waypoints and doesn't run to into any walls. -Maria and Ana
 	
 */
 
@@ -88,6 +92,21 @@ level								level1;
 vector<billboard*>					enemies;
 vector<bullet*>					    bullets;
 
+//-----enemy movement and their wall collison -ML && AP -----//
+float speeding;
+float elapsed2;
+float distance1;
+XMFLOAT3 direction;
+XMFLOAT3 startA;
+XMFLOAT3 endA;
+
+
+int nextA;
+bool backwardsA = false;
+int index;
+float idleTime;
+//-----------------------------------------------------------
+
 //needed for color change -ML
 bool static currColorCheck = false;
 XMFLOAT4 frameColor(0, 0, 1, 0);
@@ -106,6 +125,147 @@ explosion_handler  explosionhandler;
 //FOR Font -SH & -EC
 /////////////////////////////
 Font font;
+
+//-----ememy movement and collison -ML & AP -----------------
+enum enemyName {
+	A, B, C, D, E
+};
+
+struct waypoint {
+
+	int ID;
+	XMFLOAT3 position; //where its going
+
+};
+
+vector<vector<waypoint*>> graph; //2D arrayish column, row
+
+waypoint* createWaypoint(XMFLOAT3 in)
+{
+	waypoint* result = new waypoint();
+	result->ID = graph.size();
+	result->position = in;
+	graph.push_back(vector<waypoint*>());
+	return result;
+}
+
+XMFLOAT3 b(-2, 0, 8); //A2 1
+XMFLOAT3 c(-12, 0, 8); //A3 2
+
+void initGraph() {
+	waypoint* w_a = createWaypoint(XMFLOAT3(0, 0, 5)); //A1 0
+	waypoint* w_b = createWaypoint(b);
+	waypoint* w_c = createWaypoint(c);
+
+	graph[w_a->ID].push_back(w_a);
+	graph[w_a->ID].push_back(w_b);
+	graph[w_a->ID].push_back(w_c);
+	
+}
+
+void createEnemies() {
+	for (int i = 0; i < 5; i++)
+	{
+		enemies.push_back(new billboard());
+	}
+	enemies[0]->position = XMFLOAT3(0, 0, 5); //front A
+	enemies[1]->position = XMFLOAT3(-10, 0, 32); //back B
+	enemies[2]->position = XMFLOAT3(-6, 0, 18); //middle left C
+	enemies[3]->position = XMFLOAT3(3, 0, 14); //middle right D
+	enemies[4]->position = XMFLOAT3(16, 0, 12); //far left E
+	
+}
+
+XMFLOAT3 getNextWaypoint(enemyName enName) {
+
+	XMFLOAT3 wayPoint;
+	if (enName == A) {
+		wayPoint = graph[0][nextA]->position;
+		nextA++;
+		if (nextA > 2) {
+			nextA = 2;
+			backwardsA = true;
+		}
+	}
+	return wayPoint;
+}
+
+XMFLOAT3 getBeforeWaypoint(enemyName enName) {
+
+	XMFLOAT3 wayPoint;
+	if (enName == A) {
+		nextA--;
+		wayPoint = graph[0][nextA]->position;
+		if (nextA < 1) {
+			nextA = 1;
+			backwardsA = false;
+		}
+	}
+	return wayPoint;
+}
+
+void preWalking(enemyName enName) {
+	if (enName == A) {
+		if (!backwardsA) {
+			startA = getNextWaypoint(A);
+			endA = getNextWaypoint(A);
+		}
+	}
+}
+
+void startWalking(enemyName enName) {
+	bool tempBack;
+	XMFLOAT3 start, end1;
+
+	if (enName == A) {
+		tempBack = backwardsA;
+		index = 0;
+		start = startA;
+		end1 = endA;
+	}
+	speeding = 2;
+	elapsed2 = 0.01f;
+
+
+	distance1 = sqrt(pow(end1.x - start.x, 2) + pow(end1.y - start.y, 2) + pow(end1.z - start.z, 2));
+	direction = XMFLOAT3((end1.x - start.x) / distance1, (end1.y - start.y) / distance1, (end1.z - start.z) / distance1);
+
+	enemies[index]->position.x += direction.x * speeding * elapsed2;
+	enemies[index]->position.y += direction.y * speeding * elapsed2;
+	enemies[index]->position.z += direction.z * speeding * elapsed2;
+
+	float currDistance = sqrt(pow(enemies[index]->position.x - start.x, 2) + pow(enemies[index]->position.y - start.y, 2) + pow(enemies[index]->position.z - start.z, 2));
+
+	if (currDistance >= distance1) {
+
+		if (idleTime >= 0.0 && idleTime <= 3.0) {
+			enemies[index]->position.x = end1.x;
+			enemies[index]->position.y = end1.y;
+			enemies[index]->position.z = end1.z;
+			idleTime += 0.01;
+		}
+		else {
+			idleTime = 0.0;
+			if (!tempBack) {
+				if (enName == A) {
+					startA = end1;
+					endA = getNextWaypoint(enName);
+				}
+			}
+			else {
+				if (enName == A) {
+					startA = end1;
+					endA = getBeforeWaypoint(enName);
+				}
+			}
+		}
+
+	}
+}
+//----------------------------------------------------------
+
+
+
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -133,6 +293,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		CleanupDevice();
 		return 0;
 	}
+
+	//-----for enemy movement and collision -ML & AP----------
+	initGraph();
+	createEnemies();
+	preWalking(A);
+	//--------------------------------------------------------
+
 
 	// Main message loop
 	MSG msg = { 0 };
@@ -849,6 +1016,7 @@ void OnMM(HWND hwnd, int x, int y, UINT keyFlags)
 
 BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 {
+	/*
 	for (int i = 0; i < 5; i++)
 	{
 		enemies.push_back(new billboard());
@@ -858,6 +1026,7 @@ BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 	enemies[2]->position = XMFLOAT3(2, 0, 8.5);
 	enemies[3]->position = XMFLOAT3(2, 0, 12);
 	enemies[4]->position = XMFLOAT3(-3, 0, 12);
+	*/
 
 	RECT rc;
 	GetWindowRect(hwnd, &rc);
@@ -1064,6 +1233,8 @@ void Render()
 	g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	cam.animation(&level1);//pass the level -ML
+
+	startWalking(A); //enemy movement and collision -ML & AP
 
 	XMMATRIX view = cam.get_matrix(&g_View);
 	XMMATRIX worldmatrix;
