@@ -1362,7 +1362,7 @@ void Render()
 			{
 				//enemies.pop_back();
 				//erase the eneny 
-				enemies.erase(enemies.begin()+ jj);
+				//enemies.erase(enemies.begin()+ jj);
 			}
 			///////////////////////////////////////
 
