@@ -34,6 +34,7 @@ Features Completed:
 -----11/17/16------------------------------------
 	Enemy now moves from 3 different waypoints and doesn't run to into any walls. -Maria and Ana
 	
+	
 */
 
 
