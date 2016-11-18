@@ -35,6 +35,8 @@
 //			HINT: do step 6 i.e. when hitting someting
 //				
 //**********************************************************************************************************************************************
+
+//ADDED BY -SH & -EC
 HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 struct vertexstruct
 	{

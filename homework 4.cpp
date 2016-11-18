@@ -92,18 +92,18 @@ vector<bullet*>					    bullets;
 bool static currColorCheck = false;
 XMFLOAT4 frameColor(0, 0, 1, 0);
 
-//needed for bullet color change
+//needed for bullet color change -SH
 bool static spacebar = false;
 XMFLOAT4 bulletColor(0, 0, 1, 0);
 
 //needed for enemy color change -SH
 XMFLOAT4 enemyColor(0, 0, 1, 0);
 
-//FOR EXPLOSION -SH
+//FOR EXPLOSION -SH & -EC
 /////////////////////////////
 explosion_handler  explosionhandler;
 
-//FOR Font -SH
+//FOR Font -SH & -EC
 /////////////////////////////
 Font font;
 //--------------------------------------------------------------------------------------
@@ -1199,7 +1199,7 @@ void Render()
 			if (length < 1) 
 			{
 				//ADDS FIRE TO THE ENEMY
-				//-SH
+				//-SH & -EC
 				//////////////////////////////
 				explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0,0,0), 1, 4.0);	                   //<-1. argument: position
 					//																							2. argument: impulse in unit per second
@@ -1248,7 +1248,7 @@ void Render()
 	g_pImmediateContext->Draw(36, 0);
 	//=================================================================================================================================//
 
-	//DISPLAYS INFORMATION -SH
+	//DISPLAYS INFORMATION -EC & -SH
 	/////////////////////////////////
 	//it slows down the program
 	//font << "TEST";

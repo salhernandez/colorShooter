@@ -10,6 +10,7 @@
 //********************************************************
 
 
+//ADDED BY -SH & -EC
 
 #include <dshow.h>
 #include <cstdio>

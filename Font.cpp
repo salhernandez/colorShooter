@@ -2,7 +2,9 @@
 #include "cassert"
 #include <vector>
 #include <d3dcompiler.h>
-//cruz test
+
+//ADDED BY -EC & -SH
+
 #define RELEASE_COM(x) if(x){x->Release(); x=0;}
 
 Font::Font()

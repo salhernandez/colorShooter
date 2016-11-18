@@ -6,6 +6,7 @@
 #include <d3dx11tex.h>
 #include <xnamath.h>
 
+//ADDED BY -EC & -SH
 /*========================================================================================================*/
 //	How to use this class based on lecture projects:
 //
