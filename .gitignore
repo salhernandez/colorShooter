@@ -1,0 +1,9 @@
+#Excludes the large database file
+*.db
+
+#Excludes the debug folder
+/Debug/
+
+#ignore
+lecture 8_2010.VC.VC.opendb
+/.vs/
