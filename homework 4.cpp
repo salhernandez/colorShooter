@@ -1391,20 +1391,21 @@ void Render()
 				//erase the eneny 
 				//enemies.erase(enemies.begin()+ jj);
 
-				//ADDS FIRE TO THE ENEMY
-				//-SH & -EC
-				//////////////////////////////
-				explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
-																																				//2. argument: impulse in unit per second
-																															   				    //3. argument: type of explosions (how many have you initialized?) starting with 0
-																																			    //4. argument: scaling of the explosion
-																																			    /////////////////////
-				
-				//decreases enemy life and checks if they have no life left -SH
-				if (--enemies[jj]->life <= 0) {
-					enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
+				//checks that the bullet and the enemy are NOT the same color -SH
+				if (frameColor.x != enemyColor.x && frameColor.z != enemyColor.z) {
+					//ADDS FIRE TO THE ENEMY
+					//-SH & -EC
+					//////////////////////////////
+					explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
+																																					//2. argument: impulse in unit per second
+																																					//3. argument: type of explosions (how many have you initialized?) starting with 0
+																																					//4. argument: scaling of the explosion
+																																					/////////////////////
+					//decreases enemy life and checks if they have no life left -SH
+					if (--enemies[jj]->life <= 0) {
+						enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
+					}
 				}
-
 			}
 
 		//END ENEMY BULLET COLLISION
