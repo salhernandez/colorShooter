@@ -9,6 +9,7 @@
 #include "explosion.h"
 #include "Font.h"
 #include "sound.h"
+#include <sstream>
 /*
 TEAM MEMBERS: 
 	Ediberto Cruz: EC
@@ -108,10 +109,10 @@ bool backwardsA = false;
 int index;
 float idleTime;
 //-----------------------------------------------------------
-
 //needed for color change -ML
 bool static currColorCheck = false;
 XMFLOAT4 frameColor(0, 0, 1, 0);
+//-----ememy movement and collison -ML & AP -----------------
 
 //needed for bullet color change -SH
 bool static spacebar = false;
@@ -128,7 +129,9 @@ explosion_handler  explosionhandler;
 /////////////////////////////
 Font font;
 
-//-----ememy movement and collison -ML & AP -----------------
+//Keeps track of enemies killed -SH
+////////////////////////////////////
+int enemiesKilled = 0;
 
 
 enum enemyName {
@@ -1217,7 +1220,7 @@ void Render()
 	//long elapsedMillis = stopwatch.elapse_milli();
 	stopwatch.start();//restart
 	//timer += elapsed 
-
+	string displayInfo = "";
 	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
@@ -1404,6 +1407,7 @@ void Render()
 					//decreases enemy life and checks if they have no life left -SH
 					if (--enemies[jj]->life <= 0) {
 						enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
+						enemiesKilled++;
 					}
 				}
 			}
@@ -1415,6 +1419,51 @@ void Render()
 		g_pImmediateContext->Draw(12, 0);
 	}
 	//END FIRE MULTIPLE BULLETS
+	/////////////////////////////////////////////////////////////
+
+	//DISPLAY PLAYER LIFE
+	//-SH
+	////////////////////////////////////////////////////////////
+
+	//converts int to string
+	stringstream ss(stringstream::in | stringstream::out);
+	ss << cam.life;
+
+	stringstream ss2(stringstream::in | stringstream::out);
+	ss2 << enemiesKilled;
+
+	displayInfo += "Player Life: "+ss.str()+"\n"
+					+"Enemies Killed: "+ss2.str();
+
+	//set font properties
+	font.setColor(XMFLOAT3(0, 0, 0));
+	font.setPosition(XMFLOAT3(-.05, -.7, 0));
+
+	//display info
+	font << displayInfo;
+	////////////////////////////////////////////////////////////
+
+
+	//PLAYER & ENEMY COLLISION DETECTION
+	//-SH
+	//not working properly
+	/////////////////////////////////////////////////////////////
+	XMFLOAT3 dPE;
+	for (int jj = 0; jj < enemies.size(); jj++) {
+		dPE.x = cam.position.x - enemies[jj]->position.x;
+		dPE.y = cam.position.y - enemies[jj]->position.y;
+		dPE.z = cam.position.z - enemies[jj]->position.z;
+
+		//ok, now calculate the length of the vector :
+		float lengthPE = sqrt(dPE.x* dPE.x + dPE.y* dPE.y + dPE.z* dPE.z);
+
+		//Delete the enemy on hit -EC
+		//////////////////////////
+		if (lengthPE < 1)
+		{
+			PostQuitMessage(0);
+		}
+	}
 	/////////////////////////////////////////////////////////////
 
 	//set before the frame because otherwise it will interfere with the frame itself
@@ -1448,11 +1497,6 @@ void Render()
 
 	g_pImmediateContext->Draw(36, 0);
 	//=================================================================================================================================//
-
-	//DISPLAYS INFORMATION -EC & -SH
-	/////////////////////////////////
-	//it slows down the program
-	//font << "TEST";
 
 	g_pSwapChain->Present(0, 0);
 }
