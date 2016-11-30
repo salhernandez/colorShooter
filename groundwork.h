@@ -130,11 +130,13 @@ public:
 		scale = 1;
 		transparency = 1;
 		activation = ACTIVE; //activates billboard to draw it -ML
+		life = 4; //enemies starting life -SH
 	}
 	XMFLOAT3 position; //obvious
 	float scale;		//in case it can grow
 	float transparency; //for later use
 	billActive activation; //determines if the billboard is active or not for drawing - ML
+	int life; //adds life count to enemy -SH
 	XMMATRIX get_matrix(XMMATRIX &ViewMatrix)
 	{
 
@@ -413,13 +415,14 @@ class camera
 private:
 
 public:
-	int w, s, a, d;
+	int w, s, a, d, life;
 	bool shift;//-SH
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
 	camera()
 	{
 		w = s = a = d = 0;
+		life = 5;
 		shift = false;//-SH
 		position = rotation = XMFLOAT3(0, 0, 0);
 	}

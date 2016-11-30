@@ -1370,46 +1370,43 @@ void Render()
 		g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
 
 
-		//ENEMY BULLET COLLISION 
+		//ENEMY BULLET COLLISION & PLAYER COLLISION WITH ENEMY
 		//SH & AP
 		//////////////////////////////////////////////////////////////
-		XMFLOAT3 diff;
+		XMFLOAT3 dPBE;
 
 		for (int jj = 0; jj < enemies.size(); jj++) {
-			diff.x = bullets[ii]->pos.x - enemies[jj]->position.x;
-			diff.y = bullets[ii]->pos.y - enemies[jj]->position.y;
-			diff.z = bullets[ii]->pos.z - enemies[jj]->position.z;
+			dPBE.x = bullets[ii]->pos.x - enemies[jj]->position.x;
+			dPBE.y = bullets[ii]->pos.y - enemies[jj]->position.y;
+			dPBE.z = bullets[ii]->pos.z - enemies[jj]->position.z;
 
 			//ok, now calculate the length of the vector :
-			float length = sqrt(diff.x* diff.x + diff.y* diff.y + diff.z* diff.z);
-			//pops the enemy
+			float lengthPBE = sqrt(dPBE.x* dPBE.x + dPBE.y* dPBE.y + dPBE.z* dPBE.z);
 			
 			//Delete the enemy on hit -EC
 			//////////////////////////
-			if (length < 0.5)
+			if (lengthPBE < 0.3)
 			{
 				//enemies.pop_back();
 				//erase the eneny 
-				enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
 				//enemies.erase(enemies.begin()+ jj);
-			}
-			else {
 
-			}
-			///////////////////////////////////////
-
-			//calculated distance...COLLISION
-			if (length < 1) 
-			{
 				//ADDS FIRE TO THE ENEMY
 				//-SH & -EC
 				//////////////////////////////
-				explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0,0,0), 1, 4.0);	                   //<-1. argument: position
-					//																							2. argument: impulse in unit per second
-					//																							3. argument: type of explosions (how many have you initialized?) starting with 0
-					//																							4. argument: scaling of the explosion
-				/////////////////////
+				explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
+																																				//2. argument: impulse in unit per second
+																															   				    //3. argument: type of explosions (how many have you initialized?) starting with 0
+																																			    //4. argument: scaling of the explosion
+																																			    /////////////////////
+				
+				//decreases enemy life and checks if they have no life left -SH
+				if (--enemies[jj]->life <= 0) {
+					enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
+				}
+
 			}
+
 		//END ENEMY BULLET COLLISION
 		////////////////////////////////////////////////////////////////
 		}
