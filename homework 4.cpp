@@ -1625,7 +1625,7 @@ void Render()
 			
 			//Delete the enemy on hit -EC
 			//////////////////////////
-			if (lengthPBE < 0.3)
+			if (lengthPBE < 0.5)
 			{
 				//enemies.pop_back();
 				//erase the eneny 
