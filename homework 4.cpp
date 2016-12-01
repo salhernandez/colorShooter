@@ -94,18 +94,19 @@ camera								cam;
 level								level1;
 vector<billboard*>					enemies;
 vector<bullet*>					    bullets;
+vector<bullet*>						enBullets;
 
 //-----enemy movement and their wall collison -ML && AP -----//
 float speeding;
 float elapsed2;
 float distance1;
 XMFLOAT3 direction;
-XMFLOAT3 startA;
-XMFLOAT3 endA;
+XMFLOAT3 startA, startB, startC, startD, startE;
+XMFLOAT3 endA, endB, endC, endD, endE;
 
 
-int nextA;
-bool backwardsA = false;
+int nextA, nextB, nextC, nextD, nextE;
+bool backwardsA = false, backwardsB = false, backwardsC = false, backwardsD = false, backwardsE = false;
 int index;
 float idleTime;
 //-----------------------------------------------------------
@@ -156,17 +157,65 @@ waypoint* createWaypoint(XMFLOAT3 in)
 	return result;
 }
 
-XMFLOAT3 b(-2, 0, 8); //A2 1
-XMFLOAT3 c(-12, 0, 8); //A3 2
+XMFLOAT3 b(-12, 0, 8); //A2 1
+XMFLOAT3 c(-12, 0, 4); //A3 2
+
+XMFLOAT3 d(-10, 0, 32); //B1 3
+XMFLOAT3 e(-26, 0, 32); //B2 4
+XMFLOAT3 f(-26, 0, 36); //B3 5
+
+XMFLOAT3 g(-6, 0, 18); //C1 6
+XMFLOAT3 h(-22, 0, 18); //C2 7
+XMFLOAT3 i(-22, 0, 13); //C3 8
+
+XMFLOAT3 j(3, 0, 14); //D1 9
+XMFLOAT3 k(2, 0, 18); //D2 10
+XMFLOAT3 l(-3, 0, 18); //D3 11
+
+XMFLOAT3 m(16, 0, 12); //E1 12
+XMFLOAT3 n(16, 0, 26); //E2 13
+XMFLOAT3 o(12, 0, 26); //E3 14
 
 void initGraph() {
-	waypoint* w_a = createWaypoint(XMFLOAT3(0, 0, 5)); //A1 0
+	waypoint* w_a = createWaypoint(XMFLOAT3(-5, 0, 8)); //A1 0
 	waypoint* w_b = createWaypoint(b);
 	waypoint* w_c = createWaypoint(c);
+
+	waypoint* w_d = createWaypoint(d);
+	waypoint* w_e = createWaypoint(e);
+	waypoint* w_f = createWaypoint(f);
+
+	waypoint* w_g = createWaypoint(g);
+	waypoint* w_h = createWaypoint(h);
+	waypoint* w_i = createWaypoint(i);
+
+	waypoint* w_j = createWaypoint(j);
+	waypoint* w_k = createWaypoint(k);
+	waypoint* w_l = createWaypoint(l);
+
+	waypoint* w_m = createWaypoint(m);
+	waypoint* w_n = createWaypoint(n);
+	waypoint* w_o = createWaypoint(o);
 
 	graph[w_a->ID].push_back(w_a);
 	graph[w_a->ID].push_back(w_b);
 	graph[w_a->ID].push_back(w_c);
+
+	graph[w_d->ID].push_back(w_d);
+	graph[w_d->ID].push_back(w_e);
+	graph[w_d->ID].push_back(w_f);
+
+	graph[w_g->ID].push_back(w_g);
+	graph[w_g->ID].push_back(w_h);
+	graph[w_g->ID].push_back(w_i);
+
+	graph[w_j->ID].push_back(w_j);
+	graph[w_j->ID].push_back(w_k);
+	graph[w_j->ID].push_back(w_l);
+
+	graph[w_m->ID].push_back(w_m);
+	graph[w_m->ID].push_back(w_n);
+	graph[w_m->ID].push_back(w_o);
 	
 }
 
@@ -175,21 +224,42 @@ void createEnemies() {
 	{
 		enemies.push_back(new billboard());
 	}
-	enemies[0]->position = XMFLOAT3(0, 0, 5); //front A
+	enemies[0]->position = XMFLOAT3(-5, 0, 8); //front A
 	enemies[0]->activation = ACTIVE;
+	enemies[0]->cooldown = 0;
 	enemies[1]->position = XMFLOAT3(-10, 0, 32); //back B
 	enemies[1]->activation = ACTIVE;
+	enemies[1]->cooldown = 0;
 	enemies[2]->position = XMFLOAT3(-6, 0, 18); //middle left C
 	enemies[2]->activation = ACTIVE;
+	enemies[2]->cooldown = 0;
 	enemies[3]->position = XMFLOAT3(3, 0, 14); //middle right D
+	enemies[3]->activation = ACTIVE;
 	enemies[3]->activation = ACTIVE;
 	enemies[4]->position = XMFLOAT3(16, 0, 12); //far left E
 	enemies[4]->activation = ACTIVE;
+	enemies[4]->cooldown = 0;
 }
 
 bool active(enemyName enName) {
 	if (enName == A) {
 		if (enemies[0]->activation == ACTIVE)
+			return true;
+	}
+	else if (enName == B) {
+		if (enemies[1]->activation == ACTIVE)
+			return true;
+	}
+	else if (enName == C) {
+		if (enemies[2]->activation == ACTIVE)
+			return true;
+	}
+	else if (enName == D) {
+		if (enemies[3]->activation == ACTIVE)
+			return true;
+	}
+	else if (enName == E) {
+		if (enemies[4]->activation == ACTIVE)
 			return true;
 	}
 	else {
@@ -208,6 +278,38 @@ XMFLOAT3 getNextWaypoint(enemyName enName) {
 			backwardsA = true;
 		}
 	}
+	else if (enName == B) {
+		wayPoint = graph[3][nextB]->position;
+		nextB++;
+		if (nextB > 2) {
+			nextB = 2;
+			backwardsB = true;
+		}
+	}
+	else if (enName == C) {
+		wayPoint = graph[6][nextC]->position;
+		nextC++;
+		if (nextC > 2) {
+			nextC = 2;
+			backwardsC = true;
+		}
+	}
+	else if (enName == D) {
+		wayPoint = graph[9][nextD]->position;
+		nextD++;
+		if (nextD > 2) {
+			nextD = 2;
+			backwardsD = true;
+		}
+	}
+	else if (enName == E) {
+		wayPoint = graph[12][nextE]->position;
+		nextE++;
+		if (nextE > 2) {
+			nextE = 2;
+			backwardsE = true;
+		}
+	}
 	return wayPoint;
 }
 
@@ -222,6 +324,38 @@ XMFLOAT3 getBeforeWaypoint(enemyName enName) {
 			backwardsA = false;
 		}
 	}
+	else if (enName == B) {
+		nextB--;
+		wayPoint = graph[3][nextB]->position;
+		if (nextB < 1) {
+			nextB = 1;
+			backwardsB = false;
+		}
+	}
+	else if (enName == C) {
+		nextC--;
+		wayPoint = graph[6][nextC]->position;
+		if (nextC < 1) {
+			nextC = 1;
+			backwardsC = false;
+		}
+	}
+	else if (enName == D) {
+		nextD--;
+		wayPoint = graph[9][nextD]->position;
+		if (nextD < 1) {
+			nextD = 1;
+			backwardsD = false;
+		}
+	}
+	else if (enName == E) {
+		nextE--;
+		wayPoint = graph[12][nextE]->position;
+		if (nextE < 1) {
+			nextE = 1;
+			backwardsE = false;
+		}
+	}
 	return wayPoint;
 }
 
@@ -230,6 +364,30 @@ void preWalking(enemyName enName) {
 		if (!backwardsA) {
 			startA = getNextWaypoint(A);
 			endA = getNextWaypoint(A);
+		}
+	}
+	else if (enName == B) {
+		if (!backwardsB) {
+			startB = getNextWaypoint(B);
+			endB = getNextWaypoint(B);
+		}
+	}
+	else if (enName == C) {
+		if (!backwardsC) {
+			startC = getNextWaypoint(C);
+			endC = getNextWaypoint(C);
+		}
+	}
+	else if (enName == D) {
+		if (!backwardsD) {
+			startD = getNextWaypoint(D);
+			endD = getNextWaypoint(D);
+		}
+	}
+	else if (enName == E) {
+		if (!backwardsE) {
+			startE = getNextWaypoint(E);
+			endE = getNextWaypoint(E);
 		}
 	}
 }
@@ -243,6 +401,30 @@ void startWalking(enemyName enName) {
 		index = 0;
 		start = startA;
 		end1 = endA;
+	}
+	else if (enName == B) {
+		tempBack = backwardsB;
+		index = 1;
+		start = startB;
+		end1 = endB;
+	}
+	else if (enName == C) {
+		tempBack = backwardsC;
+		index = 2;
+		start = startC;
+		end1 = endC;
+	}
+	else if (enName == D) {
+		tempBack = backwardsD;
+		index = 3;
+		start = startD;
+		end1 = endD;
+	}
+	else if (enName == E) {
+		tempBack = backwardsE;
+		index = 4;
+		start = startE;
+		end1 = endE;
 	}
 	speeding = 2;
 	elapsed2 = 0.01f;
@@ -272,11 +454,43 @@ void startWalking(enemyName enName) {
 					startA = end1;
 					endA = getNextWaypoint(enName);
 				}
+				else if (enName == B) {
+					startB = end1;
+					endB = getNextWaypoint(enName);
+				}
+				else if (enName == C) {
+					startC = end1;
+					endC = getNextWaypoint(enName);
+				}
+				else if (enName == D) {
+					startD = end1;
+					endD = getNextWaypoint(enName);
+				}
+				else if (enName == E) {
+					startE = end1;
+					endE = getNextWaypoint(enName);
+				}
 			}
 			else {
 				if (enName == A) {
 					startA = end1;
 					endA = getBeforeWaypoint(enName);
+				}
+				else if (enName == B) {
+					startB = end1;
+					endB = getBeforeWaypoint(enName);
+				}
+				else if (enName == C) {
+					startC = end1;
+					endC = getBeforeWaypoint(enName);
+				}
+				else if (enName == D) {
+					startD = end1;
+					endD = getBeforeWaypoint(enName);
+				}
+				else if (enName == E) {
+					startE = end1;
+					endE = getBeforeWaypoint(enName);
 				}
 			}
 		}
@@ -320,6 +534,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	createEnemies();
 	if (active(A)) {
 		preWalking(A); //starts walking if enemy is active
+	}
+	if (active(B)) {
+		preWalking(B);
+	}
+	if (active(C)) {
+		preWalking(C); //starts walking if enemy is active
+	}
+	if (active(D)) {
+		preWalking(D);
+	}
+	if (active(E)) {
+		preWalking(E);
 	}
 	
 	//--------------------------------------------------------
@@ -1261,6 +1487,18 @@ void Render()
 	if (active(A)) { //continues walking if enemy is active -ML
 		startWalking(A); //enemy movement and collision -ML & AP
 	}
+	if (active(B)) {
+		startWalking(B);
+	}
+	if (active(C)) {
+		startWalking(C);
+	}
+	if (active(D)) {
+		startWalking(D);
+	}
+	if (active(E)) {
+		startWalking(E);
+	}
 	
 
 	XMMATRIX view = cam.get_matrix(&g_View);
@@ -1400,11 +1638,11 @@ void Render()
 					//////////////////////////////
 					explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y+2, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
 																																					//2. argument: impulse in unit per second
-																																					//3. argument: type of explosions (how many have you initialized?) starting with 0
+					enemies[jj]->life--;																														//3. argument: type of explosions (how many have you initialized?) starting with 0
 																																					//4. argument: scaling of the explosion
 																																					/////////////////////
 					//decreases enemy life and checks if they have no life left -SH
-					if (--enemies[jj]->life <= 0) {
+					if (enemies[jj]->life <= 0) {
 						enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
 						enemiesKilled++;
 					}
@@ -1419,6 +1657,80 @@ void Render()
 	}
 	//END FIRE MULTIPLE BULLETS
 	/////////////////////////////////////////////////////////////
+
+
+	//---------------- Enemy shooting at player if they are not the same color -ML ---------------------------------------------------
+	//cooldown
+
+	for (int jj = 0; jj < enemies.size(); jj++) {
+
+		//ok, now calculate the length of the vector :
+		float length2 = sqrt(pow((enemies[jj]->position.x + cam.position.x), 2) + pow((enemies[jj]->position.y + cam.position.y), 2) + pow((enemies[jj]->position.z + cam.position.z), 2));
+		if (4 > length2 && enemies[jj]->cooldown <= 0 && enemies[jj]->activation == ACTIVE) {
+			if (frameColor.x != enemyColor.x && frameColor.z != enemyColor.z) {
+				//PostQuitMessage(0);
+				bullet *en_bull = new bullet;
+				//	XMFLOAT3 oldCamPos = cam.position;
+				XMFLOAT3 enVector = XMFLOAT3(-cam.position.x - enemies[jj]->position.x, -cam.position.y - enemies[jj]->position.y, -cam.position.z - enemies[jj]->position.z);
+				enVector = XMFLOAT3(enVector.x / length2, enVector.y / length2, enVector.z / length2); //normal speed
+																									   //enVector = XMFLOAT3(0.25*enVector.x / length2, 0.25*enVector.y / length2, 0.25*enVector.z / length2); //slower
+				en_bull->pos.x = enemies[jj]->position.x;
+				en_bull->pos.y = 0.25;
+				en_bull->pos.z = enemies[jj]->position.z;
+
+
+				en_bull->imp = enVector;
+				enBullets.push_back(en_bull);
+				enemies[jj]->cooldown = 1;
+			}
+			
+
+		}
+
+	}
+
+	for (int i = 0; i < enemies.size(); i++) {
+		if (enemies[i]->cooldown > 0.0 && enemies[i]->cooldown <= 3.0) {
+
+			enemies[i]->cooldown -= (elapsed / 1000000.0); //cooldown in seconds
+		}
+	}
+
+
+	for (int ii = 0; ii < enBullets.size(); ii++)
+	{
+		worldmatrix = enBullets[ii]->getmatrix(elapsed, view);
+
+		//if the player does not like to have to switch bullet colors as well
+		//change bulletColor to frameColor
+		//bulletColor
+		constantbuffer.bulletColorChanger = frameColor; //sends the current bullet color to the Pixel Shader -SH
+		g_pImmediateContext->PSSetShader(g_pPixelShader_bullets, NULL, 0); //added pixel shader for bullets
+
+		g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV1);
+		constantbuffer.World = XMMatrixTranspose(worldmatrix);
+		constantbuffer.View = XMMatrixTranspose(view);
+		constantbuffer.Projection = XMMatrixTranspose(g_Projection);
+		constantbuffer.info = XMFLOAT4(1, 1, 1, 1);
+		//constantbuffer.info = XMFLOAT4(smokeray[ii]->transparency, 1, 1, 1);
+		g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
+
+
+
+		g_pImmediateContext->Draw(12, 0);
+	}
+
+	for (int i = 0; i < enBullets.size(); i++) {
+		float length3 = sqrt(pow((enBullets[i]->pos.x + cam.position.x), 2) + pow((enBullets[i]->pos.y + cam.position.y), 2) + pow((enBullets[i]->pos.z + cam.position.z), 2));
+		if (1 > length3) {
+			cam.life--;
+			cam.position = XMFLOAT3(0, 0, 0);
+		}
+
+	}
+	//----------------------------------------------------------------------------------------------------------------------------
+
+
 
 	//DISPLAY PLAYER LIFE
 	//-SH
@@ -1463,11 +1775,19 @@ void Render()
 			//checks that the playert and the enemy are NOT the same color -SH
 			if (frameColor.x != enemyColor.x && frameColor.z != enemyColor.z) {
 				//instant deathAs
-				PostQuitMessage(0);
+				//PostQuitMessage(0);
+				cam.position = XMFLOAT3(0, 0, 0); //player starts at the beginning on collision -ML
+				cam.life--; //player's life goes down on collision -ML
 			}
 		}
 	}
 	/////////////////////////////////////////////////////////////
+
+	//------------- if the player has no more lives then it's game over -ML -------------------
+	if (cam.life <= 0) { 
+		PostQuitMessage(0);
+	}
+	//-----------------------------------------------------------------------------------------
 
 	//set before the frame because otherwise it will interfere with the frame itself
 	//FOR EXPLOSION
