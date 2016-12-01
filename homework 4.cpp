@@ -1398,7 +1398,7 @@ void Render()
 					//ADDS FIRE TO THE ENEMY
 					//-SH & -EC
 					//////////////////////////////
-					explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
+					explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y+2, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
 																																					//2. argument: impulse in unit per second
 																																					//3. argument: type of explosions (how many have you initialized?) starting with 0
 																																					//4. argument: scaling of the explosion
