@@ -185,7 +185,6 @@ void createEnemies() {
 	enemies[3]->activation = ACTIVE;
 	enemies[4]->position = XMFLOAT3(16, 0, 12); //far left E
 	enemies[4]->activation = ACTIVE;
-	
 }
 
 bool active(enemyName enName) {
@@ -1423,7 +1422,7 @@ void Render()
 
 	//DISPLAY PLAYER LIFE
 	//-SH
-	////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////w
 
 	//converts int to string
 	stringstream ss(stringstream::in | stringstream::out);
@@ -1432,8 +1431,8 @@ void Render()
 	stringstream ss2(stringstream::in | stringstream::out);
 	ss2 << enemiesKilled;
 
-	displayInfo += "Player Life: "+ss.str()+"\n"
-					+"Enemies Killed: "+ss2.str();
+	displayInfo += "Player Life: " + ss.str() + "\n"
+		+ "Enemies Killed: " + ss2.str();
 
 	//set font properties
 	font.setColor(XMFLOAT3(0, 0, 0));
@@ -1446,22 +1445,26 @@ void Render()
 
 	//PLAYER & ENEMY COLLISION DETECTION
 	//-SH
-	//not working properly
 	/////////////////////////////////////////////////////////////
 	XMFLOAT3 dPE;
 	for (int jj = 0; jj < enemies.size(); jj++) {
-		dPE.x = cam.position.x - enemies[jj]->position.x;
-		dPE.y = cam.position.y - enemies[jj]->position.y;
-		dPE.z = cam.position.z - enemies[jj]->position.z;
+
+		//negative position of cam to fix collision
+		dPE.x = -cam.position.x - enemies[jj]->position.x;
+		dPE.y = -cam.position.y - enemies[jj]->position.y;
+		dPE.z = -cam.position.z - enemies[jj]->position.z;
 
 		//ok, now calculate the length of the vector :
 		float lengthPE = sqrt(dPE.x* dPE.x + dPE.y* dPE.y + dPE.z* dPE.z);
 
-		//Delete the enemy on hit -EC
-		//////////////////////////
-		if (lengthPE < 1)
+		//collision with enemy
+		if (lengthPE < .3)
 		{
-			PostQuitMessage(0);
+			//checks that the playert and the enemy are NOT the same color -SH
+			if (frameColor.x != enemyColor.x && frameColor.z != enemyColor.z) {
+				//instant deathAs
+				PostQuitMessage(0);
+			}
 		}
 	}
 	/////////////////////////////////////////////////////////////
