@@ -1210,8 +1210,8 @@ boolean colorSwitch = true;
 
 //added for enemy color change -SH
 /////////////////////////////////
-int minSecs = 10;
-int maxSecs = 15;
+int minSecs = 3;
+int maxSecs = 7;
 void Render()
 {
 	static StopWatchMicro_ stopwatch;
