@@ -37,6 +37,13 @@ Features Completed:
 	Enemy now changes color after a certain amount of time -SH
 	Added Explosions when enemy is hit -SH & -EC
 	Added sounds when firing bullet -SH & -EC
+	
+3rd Milestone Completed:
+-----12/3/16--------------------------------------
+	Enemy now shoots at the player if they are different colors upon detection. -ML
+	Program will be over if player has no more lives. -ML
+	Added movement for the rest of the enemies. -ML & AP
+	Player does not die upon collision if they're the same color. -SH
 */
 
 
