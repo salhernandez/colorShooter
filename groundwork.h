@@ -426,7 +426,8 @@ public:
 		w = s = a = d = 0;
 		life = 5;
 		shift = false;//-SH
-		position = rotation = XMFLOAT3(26, 0,-36);
+		//position = rotation = XMFLOAT3(26, 0,-36);Next to the door
+		position = rotation = XMFLOAT3(0, 0, 0);
 	}
 	void animation(level *leveldata)//using the level for the wall collision -ML
 	{
