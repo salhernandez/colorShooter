@@ -131,12 +131,14 @@ public:
 		transparency = 1;
 		activation = ACTIVE; //activates billboard to draw it -ML
 		life = 4; //enemies starting life -SH
+		cooldown = 0.0; //added cooldown for bullets -ML
 	}
 	XMFLOAT3 position; //obvious
 	float scale;		//in case it can grow
 	float transparency; //for later use
 	billActive activation; //determines if the billboard is active or not for drawing - ML
 	int life; //adds life count to enemy -SH
+	float cooldown; //added bullet cooldown -ML
 	XMMATRIX get_matrix(XMMATRIX &ViewMatrix)
 	{
 
