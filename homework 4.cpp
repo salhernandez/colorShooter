@@ -1584,7 +1584,8 @@ void Render()
 		timeTOwin++;
 
 		if (timeTOwin <= 100) {
-			font.setColor(XMFLOAT3(0, 0, 0));
+			font.setColor(XMFLOAT3(1, .5, 1));
+			
 			font.setPosition(XMFLOAT3(0, .5, 0));
 			//display info
 			font << won;
