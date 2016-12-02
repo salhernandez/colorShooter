@@ -45,6 +45,7 @@ Features Completed:
 	Added movement for the rest of the enemies. -ML & AP
 	Player does not die upon collision if they're the same color. -SH
 	Bullet color detection with enemy -SH
+	Added new sounds for gunshots and enemy hit -SH
 */
 
 
