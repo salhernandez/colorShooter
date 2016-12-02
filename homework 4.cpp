@@ -1812,7 +1812,7 @@ void Render()
 		float length3 = sqrt(pow((enBullets[i]->pos.x + cam.position.x), 2) + pow((enBullets[i]->pos.y + cam.position.y), 2) + pow((enBullets[i]->pos.z + cam.position.z), 2));
 		if (1 > length3) {
 			cam.life--;
-			cam.position = XMFLOAT3(0, 0, 0);
+			cam.position = XMFLOAT3(0, 0, -2);
 		}
 
 	}
