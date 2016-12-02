@@ -73,11 +73,15 @@ ID3D11BlendState*					g_BlendState;//transperancy
 ID3D11DepthStencilState			*ds_on, *ds_off;
 int									skyCount; //-EC
 
+
 ID3D11Buffer*                       g_pCBuffer = NULL;
 
 ID3D11ShaderResourceView*           g_pTextureRV = NULL;//to create a new texture 
 ID3D11ShaderResourceView*           g_pTextureRV1 = NULL;//to create a new texture 
 ID3D11ShaderResourceView*           g_pTextureRV_frame = NULL; //border frame -ML
+ID3D11ShaderResourceView* 			doorExit = NULL;
+XMMATRIX                            doorMatrix;
+
 
 ID3D11ShaderResourceView*           g_pTextureRV_crosshairs = NULL; //crosshairs -SH
 
@@ -102,6 +106,8 @@ float distance1;
 XMFLOAT3 direction;
 XMFLOAT3 startA;
 XMFLOAT3 endA;
+
+int timeTOwin = 0;
 
 
 int nextA;
@@ -628,7 +634,12 @@ HRESULT InitDevice()
 	pPSBlob->Release();
 	if (FAILED(hr))
 		return hr;
+	
+
+
+
 	//================================================================================================================================================//
+
 
 	//create skybox vertex buffer
 	SimpleVertex vertices_skybox[] =
@@ -763,6 +774,10 @@ HRESULT InitDevice()
 	if (FAILED(hr))
 		return hr;
 
+	hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"game.png", NULL, NULL, &doorExit, NULL);
+	if (FAILED(hr))
+		return hr;
+
 	// Create the sample state
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -779,6 +794,7 @@ HRESULT InitDevice()
 
 	// Initialize the world matrices
 	g_World = XMMatrixIdentity();
+	doorMatrix = XMMatrixTranspose(XMMatrixTranslation(-26,0,38.5));//Matrix for the door
 
 	// Initialize the view matrix
 
@@ -1221,13 +1237,14 @@ void Render()
 	stopwatch.start();//restart
 	//timer += elapsed 
 	string displayInfo = "";
+	string won = "You Win A SUSHIIIII!! ";
 	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
 
 	// Update our time
 	static float t = 0.0f;
-	
+
 	//in the future change it so that the timer based on actual seconds
 	//changed to represent secs
 	t += 0.01;
@@ -1240,11 +1257,11 @@ void Render()
 
 	//FIX THE TIMING IN THE FUTURE
 	if (t >= num) {
-		if(colorSwitch)
+		if (colorSwitch)
 			enemyColor = XMFLOAT4(1, 0, 0, 0);
 		else
 			enemyColor = XMFLOAT4(0, 0, 1, 0);
-		
+
 		colorSwitch = !colorSwitch;
 		t = 0;
 	}
@@ -1262,7 +1279,7 @@ void Render()
 	if (active(A)) { //continues walking if enemy is active -ML
 		startWalking(A); //enemy movement and collision -ML & AP
 	}
-	
+
 
 	XMMATRIX view = cam.get_matrix(&g_View);
 	XMMATRIX worldmatrix;
@@ -1293,9 +1310,53 @@ void Render()
 
 
 
+
+
+
+
 	//render all the walls of the level
 	g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 	level1.render_level(g_pImmediateContext, g_pVertexBuffer, &view, &g_Projection, g_pCBuffer);
+
+
+	/**********************************************AP/EC*****************************************************************/
+	g_pImmediateContext->PSSetShaderResources(0, 1, &doorExit);
+	constantbuffer.World = doorMatrix;
+	g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
+	g_pImmediateContext->Draw(12, 0); //-EC
+	//-26, 0, 39
+	XMFLOAT3 ana;
+	ana.x = -cam.position.x - -26;
+	ana.y = -cam.position.y - 0;
+	ana.z = -cam.position.z - 39;
+
+	//ok, now calculate the length of the vector :
+	float lengthana = sqrt(ana.x* ana.x + ana.y* ana.y + ana.z* ana.z);
+
+	//Delete the enemy on hit -EC
+	//////////////////////////
+
+	if (lengthana < 2) {
+		timeTOwin++;
+
+		if (timeTOwin <= 100) {
+			font.setColor(XMFLOAT3(0, 0, 0));
+			font.setPosition(XMFLOAT3(0, 0, 0));
+			//display info
+			font << won;
+		}
+		else
+			PostQuitMessage(0);
+
+
+	}
+/**********************************************AP/EC*****************************************************************/
+
+
+
+
+
+
 
 
 	billene.position.z = 3;
@@ -1304,7 +1365,7 @@ void Render()
 	// Present our back buffer to our front buffer
 	XMMATRIX VR = billene.get_matrix(view);
 
-
+	 
 	constantbuffer.World = XMMatrixTranspose(VR);
 	constantbuffer.View = XMMatrixTranspose(view);
 	constantbuffer.Projection = XMMatrixTranspose(g_Projection);
