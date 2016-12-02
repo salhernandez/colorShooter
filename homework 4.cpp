@@ -1125,7 +1125,10 @@ HRESULT InitDevice()
 		//																			   4. argument: lifespan in microsecond
 	//////////////////////////////////////////////
 
+	//initial position
 	cam.position.z = -3;
+
+	//start game music
 	return S_OK;
 }
 
@@ -1192,7 +1195,7 @@ void OnLBD(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 
 	//added for sound effect
 	//still needs work, it crashes when the sound is done playing
-	start_music(L"shotgunBlast.mp3");
+	start_music(L"barreta.mp3");
 }
 ///////////////////////////////////
 //		This Function is called every time the Right Mouse Button is down
@@ -1324,6 +1327,10 @@ BOOL OnCreate(HWND hwnd, CREATESTRUCT FAR* lpCreateStruct)
 	int midx = (rc.right + rc.left) / 2;
 	int midy = (rc.bottom + rc.top) / 2;
 	SetCursorPos(midx, midy);
+
+	
+	//start_music(L"shotgunBlast.mp3");
+	
 
 	return TRUE;
 }
@@ -1721,10 +1728,12 @@ void Render()
 					//ADDS FIRE TO THE ENEMY
 					//-SH & -EC
 					//////////////////////////////
-					explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y+2, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 4.0);//<-1. argument: position
+					explosionhandler.new_explosion(XMFLOAT3(bullets[ii]->pos.x, bullets[ii]->pos.y+.5, bullets[ii]->pos.z), XMFLOAT3(0, 0, 0), 1, 1.0);//<-1. argument: position
 																																		//3. argument: type of explosions (how many have you initialized?) starting with 0
 																																					//4. argument: scaling of the explosion
 																																					/////////////////////
+
+					start_music(L"slap.mp3");
 
 					//decreases enemy life and checks if they have no life left -SH
 					if (--enemies[jj]->life <= 0) {
@@ -1770,6 +1779,8 @@ void Render()
 				en_bull->imp = enVector;
 				enBullets.push_back(en_bull);
 				enemies[jj]->cooldown = 1;
+
+				start_music(L"shotgunBlast.mp3");
 			}
 			
 
@@ -1812,7 +1823,7 @@ void Render()
 		float length3 = sqrt(pow((enBullets[i]->pos.x + cam.position.x), 2) + pow((enBullets[i]->pos.y + cam.position.y), 2) + pow((enBullets[i]->pos.z + cam.position.z), 2));
 		if (1 > length3) {
 			cam.life--;
-			cam.position = XMFLOAT3(0, 0, -2);
+			cam.position = XMFLOAT3(0, 0, -3);
 		}
 
 	}
@@ -1822,7 +1833,7 @@ void Render()
 
 	//DISPLAY PLAYER LIFE
 	//-SH
-	////////////////////////////////////////////////////////////w
+	////////////////////////////////////////////////////////////
 
 	//converts int to string
 	stringstream ss(stringstream::in | stringstream::out);
