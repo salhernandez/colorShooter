@@ -794,7 +794,7 @@ HRESULT InitDevice()
 
 	// Initialize the world matrices
 	g_World = XMMatrixIdentity();
-	doorMatrix = XMMatrixTranspose(XMMatrixTranslation(-26,0,38.5));//Matrix for the door
+	doorMatrix = XMMatrixTranspose(XMMatrixTranslation(-24,0,38));//Matrix for the door
 
 	// Initialize the view matrix
 
@@ -1321,14 +1321,15 @@ void Render()
 
 	/**********************************************AP/EC*****************************************************************/
 	g_pImmediateContext->PSSetShaderResources(0, 1, &doorExit);
-	constantbuffer.World = doorMatrix;
+	XMMATRIX doorRot = XMMatrixRotationY(XM_PIDIV2);
+	constantbuffer.World = doorMatrix * doorRot;
 	g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constantbuffer, 0, 0);
 	g_pImmediateContext->Draw(12, 0); //-EC
 	//-26, 0, 39
 	XMFLOAT3 ana;
-	ana.x = -cam.position.x - -26;
+	ana.x = -cam.position.x - -24;
 	ana.y = -cam.position.y - 0;
-	ana.z = -cam.position.z - 39;
+	ana.z = -cam.position.z - 38;
 
 	//ok, now calculate the length of the vector :
 	float lengthana = sqrt(ana.x* ana.x + ana.y* ana.y + ana.z* ana.z);
@@ -1336,19 +1337,17 @@ void Render()
 	//Delete the enemy on hit -EC
 	//////////////////////////
 
-	if (lengthana < 2) {
+	if (lengthana < 1) {
 		timeTOwin++;
 
 		if (timeTOwin <= 100) {
 			font.setColor(XMFLOAT3(0, 0, 0));
-			font.setPosition(XMFLOAT3(0, 0, 0));
+			font.setPosition(XMFLOAT3(0, .5, 0));
 			//display info
 			font << won;
 		}
 		else
 			PostQuitMessage(0);
-
-
 	}
 /**********************************************AP/EC*****************************************************************/
 
