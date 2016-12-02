@@ -44,6 +44,7 @@ Features Completed:
 	Program will be over if player has no more lives. -ML
 	Added movement for the rest of the enemies. -ML & AP
 	Player does not die upon collision if they're the same color. -SH
+	Bullet color detection with enemy -SH
 */
 
 
@@ -84,7 +85,9 @@ int									skyCount; //-EC
 ID3D11Buffer*                       g_pCBuffer = NULL;
 
 ID3D11ShaderResourceView*           g_pTextureRV = NULL;//to create a new texture 
-ID3D11ShaderResourceView*           g_pTextureRV1 = NULL;//to create a new texture 
+ID3D11ShaderResourceView*           g_pTextureRV1 = NULL;//to create a new texture
+
+ID3D11ShaderResourceView*           g_pTexture_enemy_bullet = NULL;//enemy bullet -SH
 ID3D11ShaderResourceView*           g_pTextureRV_frame = NULL; //border frame -ML
 ID3D11ShaderResourceView* 			doorExit = NULL;
 XMMATRIX                            doorMatrix;
@@ -146,6 +149,7 @@ Font font;
 ////////////////////////////////////
 int enemiesKilled = 0;
 
+static int ammoClip = 10;
 
 enum enemyName {
 	A, B, C, D, E
@@ -1009,6 +1013,11 @@ HRESULT InitDevice()
 	if (FAILED(hr))
 		return hr;
 
+	// Load the Texture
+	hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"orb.png", NULL, NULL, &g_pTexture_enemy_bullet, NULL);
+	if (FAILED(hr))
+		return hr;
+
 	// Create the sample state
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -1115,6 +1124,8 @@ HRESULT InitDevice()
 		//																			   3. argument: count of subparts of the image in y
 		//																			   4. argument: lifespan in microsecond
 	//////////////////////////////////////////////
+
+	cam.position.z = -3;
 	return S_OK;
 }
 
@@ -1130,6 +1141,7 @@ void CleanupDevice()
 	if (g_pTextureRV) g_pTextureRV->Release();
 	if (g_pTextureRV_frame) g_pTextureRV_frame->Release();
 	if (g_pTextureRV_crosshairs) g_pTextureRV_crosshairs->Release(); //-ML
+	if (g_pTexture_enemy_bullet) g_pTexture_enemy_bullet->Release(); //-SH
 
 	if (g_pCBuffer) g_pCBuffer->Release();
 	if (g_pVertexBuffer) g_pVertexBuffer->Release();
@@ -1151,6 +1163,13 @@ int totalBullets = 0;
 bool shoot = false;
 void OnLBD(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
+	//checks if there is any ammo left
+	if (ammoClip-- <= 0) {
+		ammoClip = 0;
+		start_music(L"dryGun.mp3");
+		return;
+	}
+
 	shoot = true;
 	//MULTIPLE BULLETS -SH
 	///////////////////////////////////////////////////
@@ -1368,6 +1387,10 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	case 27:
 		PostQuitMessage(0);//escape
 		break;
+	case 82: //r //reload
+		ammoClip = 10;
+		start_music(L"reload.mp3");
+		break;
 	}
 }
 
@@ -1454,6 +1477,8 @@ if(length<minimum_length)*/
 //--------------------------------------------------------------------------------------
 // Render a frame
 //--------------------------------------------------------------------------------------
+
+
 boolean colorSwitch = true;
 
 //added for enemy color change -SH
@@ -1554,10 +1579,6 @@ void Render()
 
 
 
-
-
-
-
 	//render all the walls of the level
 	g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 	level1.render_level(g_pImmediateContext, g_pVertexBuffer, &view, &g_Projection, g_pCBuffer);
@@ -1584,7 +1605,7 @@ void Render()
 	if (lengthana < 1) {
 		timeTOwin++;
 
-		if (timeTOwin <= 100) {
+		if (timeTOwin <= 200) {
 			font.setColor(XMFLOAT3(1, .5, 1));
 			font.setScaling(XMFLOAT3(3, 3, 0));
 			font.setPosition(XMFLOAT3(-.6, .5, 0));
@@ -1597,12 +1618,6 @@ void Render()
 			PostQuitMessage(0);
 	}
 /**********************************************AP/EC*****************************************************************/
-
-
-
-
-
-
 
 
 	billene.position.z = 3;
@@ -1710,14 +1725,18 @@ void Render()
 																																		//3. argument: type of explosions (how many have you initialized?) starting with 0
 																																					//4. argument: scaling of the explosion
 																																					/////////////////////
+
 					//decreases enemy life and checks if they have no life left -SH
 					if (--enemies[jj]->life <= 0) {
 						enemies[jj]->activation = INACTIVE; //once bullet hits enemy, the enemy is inactive to be drawn -ML
 						enemiesKilled++;
 					}
+
+					//deletes bullet on enemy hit
+					bullets.erase(bullets.begin() + ii);
+					break; //breaks out of the loop so that the rest of the enemies do not check against a null bullet object
 				}
 			}
-
 		//END ENEMY BULLET COLLISION
 		////////////////////////////////////////////////////////////////
 		}
@@ -1776,7 +1795,7 @@ void Render()
 		constantbuffer.bulletColorChanger = frameColor; //sends the current bullet color to the Pixel Shader -SH
 		g_pImmediateContext->PSSetShader(g_pPixelShader_bullets, NULL, 0); //added pixel shader for bullets
 
-		g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV1);
+		g_pImmediateContext->PSSetShaderResources(0, 1, &g_pTexture_enemy_bullet);
 		constantbuffer.World = XMMatrixTranspose(worldmatrix);
 		constantbuffer.View = XMMatrixTranspose(view);
 		constantbuffer.Projection = XMMatrixTranspose(g_Projection);
@@ -1812,8 +1831,20 @@ void Render()
 	stringstream ss2(stringstream::in | stringstream::out);
 	ss2 << enemiesKilled;
 
+	stringstream ss3(stringstream::in | stringstream::out);
+	ss3 << ammoClip;
+	string reload;
+
+	if (ammoClip == 0) {
+		reload = "You need to Reload!!! (R)";
+	}
+	else {
+		reload = "Ammo: " + ss3.str();
+	}
+
 	displayInfo += "Player Life: " + ss.str() + "\n"
-		+ "Enemies Killed: " + ss2.str();
+		+ "Enemies Killed: " + ss2.str() + "\n"
+		+  reload;
 
 	//set font properties
 	font.setColor(XMFLOAT3(0, 0, 0));
