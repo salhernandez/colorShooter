@@ -1469,6 +1469,7 @@ void Render()
 	//timer += elapsed 
 	string displayInfo = "";
 	string won = "You Win A SUSHIIIII!! ";
+	string good = "Congratulations!";
 	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
 	g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
@@ -1585,10 +1586,12 @@ void Render()
 
 		if (timeTOwin <= 100) {
 			font.setColor(XMFLOAT3(1, .5, 1));
-			
-			font.setPosition(XMFLOAT3(0, .5, 0));
+			font.setScaling(XMFLOAT3(3, 3, 0));
+			font.setPosition(XMFLOAT3(-.6, .5, 0));
 			//display info
 			font << won;
+			font.setPosition(XMFLOAT3(-.5, .3, 0));
+			font << good;
 		}
 		else
 			PostQuitMessage(0);
