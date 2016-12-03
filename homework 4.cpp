@@ -1127,7 +1127,7 @@ HRESULT InitDevice()
 	//////////////////////////////////////////////
 
 	//initial position
-	cam.position.z = -3;
+	cam.position.z = -4;
 
 	//start game music
 	return S_OK;
@@ -1824,7 +1824,7 @@ void Render()
 		float length3 = sqrt(pow((enBullets[i]->pos.x + cam.position.x), 2) + pow((enBullets[i]->pos.y + cam.position.y), 2) + pow((enBullets[i]->pos.z + cam.position.z), 2));
 		if (1 > length3) {
 			cam.life--;
-			cam.position = XMFLOAT3(0, 0, -3);
+			cam.position = XMFLOAT3(0, 0, -4);
 		}
 
 	}
@@ -1888,7 +1888,7 @@ void Render()
 			if (frameColor.x != enemyColor.x && frameColor.z != enemyColor.z) {
 				//instant deathAs
 				//PostQuitMessage(0);
-				cam.position = XMFLOAT3(0, 0, 0); //player starts at the beginning on collision -ML
+				cam.position = XMFLOAT3(0, 0, -4); //player starts at the beginning on collision -ML
 				cam.life--; //player's life goes down on collision -ML
 			}
 		}
