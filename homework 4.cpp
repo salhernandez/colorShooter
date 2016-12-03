@@ -1501,7 +1501,7 @@ void Render()
 	stopwatch.start();//restart
 	//timer += elapsed 
 	string displayInfo = "";
-	string won = "You Win A SUSHIIIII!! ";
+	string won = "You Won A SUSHIIIII!! ";
 	string good = "Congratulations!";
 	UINT stride = sizeof(SimpleVertex);
 	UINT offset = 0;
