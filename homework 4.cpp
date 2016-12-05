@@ -46,6 +46,7 @@ Features Completed:
 	Player does not die upon collision if they're the same color. -SH
 	Bullet color detection with enemy -SH
 	Added new sounds for gunshots and enemy hit -SH
+	Added reload mechanic -SH
 */
 
 
